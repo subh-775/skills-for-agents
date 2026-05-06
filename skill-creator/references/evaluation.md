@@ -142,6 +142,47 @@ Output that works in isolation but breaks when another skill processes it:
 
 ---
 
+## Skill Audit Checklist
+
+Use this checklist to verify a skill before submission.
+
+### Frontmatter
+- [ ] `name` matches folder name exactly.
+- [ ] `description` is pushy and includes trigger phrases.
+- [ ] `description` is LESS than 1000 characters.
+- [ ] `domain` is exactly one of: `voice`, `density`, `craft`, `process`, `content`, `analysis`, `testing`.
+- [ ] `composable: true` (unless justified otherwise).
+- [ ] `yields_to` is thoughtfully chosen based on SIP precedence.
+
+### The 12 Rules
+- [ ] Critical rules appear in first 30 lines of content.
+- [ ] Most important rule restated near the end.
+- [ ] Every major instruction has a concrete example.
+- [ ] Instructions framed positively ("do X" not "don't Y").
+- [ ] Every rule includes reasoning ("because...").
+- [ ] Content organized with headers, bullets, tables.
+- [ ] Related constraints grouped together.
+- [ ] Every paragraph earns its tokens (deletion test passed).
+- [ ] Imperative voice used throughout.
+- [ ] Abstract constraints anchored with micro-examples.
+- [ ] Skill itself models the quality it demands (the "Mirror" principle).
+- [ ] Success criteria defined for key outputs.
+- [ ] Self-verification added for high-cost constraints.
+
+### SIP Compliance
+- [ ] Composability section exists and is complete.
+- [ ] "When Leads" section lists primary scenarios.
+- [ ] "When Defers" table has concrete contracts.
+- [ ] Conflict signal template defined.
+- [ ] Skill preserves structures it didn't create (Rule 4 of SIP).
+
+### Effectiveness
+- [ ] Solves a real problem or handles a specific domain concern.
+- [ ] An AI following these instructions would produce the right output.
+- [ ] Works alongside other skills without breaking their output.
+
+---
+
 ## Quick Audit Template
 
 For a fast skill evaluation, check these in order:
