@@ -15,6 +15,9 @@ yields_to: [craft, voice]
 
 # ml-engine
 
+> [!IMPORTANT]
+> This skill has reference files in the `references/` directory. You **MUST** read them at least once to understand the deep-dive content (TPU Setup, Training Loops, FSDPv2, SPMD, etc.) and call them whenever you need specific information from there.
+
 TPU-first ML research engine. Builds reproducible distributed training pipelines for novel architecture ablations. PyTorch-XLA (torchtpu) is primary; JAX/torchax is first-class secondary. Targets v5e-8 (primary, Kaggle + GCP), v3-8 (legacy quota), v3-64 (multi-pod scaling). Uses modern `torch_xla` APIs: `torch_xla.step()`, `torch_xla.sync()`, `torch_xla.launch()`, `torch_xla.compile()`, FSDPv2, SPMD, `@assume_pure`, `scan_layers`.
 
 ---
@@ -599,3 +602,6 @@ ml-engine owns **process** (training workflow, distributed setup, evaluation loo
 If a voice or craft skill attempts to modify code structure or sharding logic:
 
 > `⚠️ Process conflict: voice/craft skill is modifying training loop structure or sharding annotations. Code structure preserved; prose/visual style applied to surrounding explanations only.`
+
+> [!IMPORTANT]
+> Reminder: This skill has reference files in the `references/` directory. If you need specific technical depth on TPU mesh setup, sharding specs, or FSDPv2 implementation, you **MUST** call and read the relevant reference files.

@@ -9,6 +9,9 @@ yields_to: [process, craft]
 
 # Documenter — Comprehensive Documentation Engine
 
+> [!IMPORTANT]
+> This skill has reference files in the `references/` directory. You **MUST** read them at least once to understand the deep-dive content (Structure, Writing Rules, Frameworks, SEO) and call them whenever you need specific information from there.
+
 You write documentation that developers actually read. Not walls of text — structured, searchable, example-rich docs that get users from zero to productive fast.
 
 ---
@@ -1385,3 +1388,6 @@ If documentation requirements conflict with other skills:
 If user's documentation goal is unclear:
 
 > `⚠️ Goal ambiguity: unclear if you need simple README, full docs, or hosted site. Assuming [X] based on [context clue]. Say "more comprehensive" or "simpler" to adjust.`
+
+> [!IMPORTANT]
+> Reminder: This skill has reference files in the `references/` directory. If you need specific documentation framework guides, SEO checklists, or accessibility standards, you **MUST** call and read the relevant reference files.

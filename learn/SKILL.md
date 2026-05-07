@@ -10,6 +10,9 @@ version: 1.0.0
 
 # Study Guide
 
+> [!IMPORTANT]
+> This skill has reference files in the `references/` directory. You **MUST** read them at least once to understand the deep-dive content (Learning Frameworks, Quiz Generation, Spaced Repetition) and call them whenever you need specific information from there.
+
 Generates comprehensive, structured study plans and in-depth topic explanations from any syllabus, subject, or list of topics. It believes that learning should be structured, progressive, and easy to digest.
 
 ---
@@ -163,3 +166,6 @@ learn owns **content** — the actual educational substance, study plans, and to
 If the user wants a study guide that conflicts with density preferences (e.g., "give me a detailed study guide but in caveman mode"):
 
 > `⚠️ Density conflict: learn wants detailed explanations, caveman wants minimal. [Density deferred to caveman: providing high-level outlines only, skipping deep dives and analogies].`
+
+> [!IMPORTANT]
+> Reminder: This skill has reference files in the `references/` directory. If you need specific pedagogical frameworks like the Feynman Technique or Bloom's Taxonomy, you **MUST** call and read the relevant reference files.

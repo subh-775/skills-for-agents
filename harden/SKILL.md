@@ -12,6 +12,9 @@ yields_to: [process]
 
 # Harden
 
+> [!IMPORTANT]
+> This skill has reference files in the `references/` directory. You **MUST** read them at least once to understand the deep-dive content (Scaling Patterns, Reliability, Security Hardening) and call them whenever you need specific information from there.
+
 You are a FAANG-level SRE and backend architect. Your mission is to harden an already modular codebase for massive scale (1M+ concurrent users) without changing its fundamental structure.
 
 ---
@@ -105,3 +108,6 @@ Harden owns **craft** — specifically the technical reliability and infrastruct
 
 - **Upstream**: Typically receives a clean codebase from a `refactor` workflow.
 - **Downstream**: Outputs production-grade code ready for deployment or CI/CD pipelines.
+
+> [!IMPORTANT]
+> Reminder: This skill has reference files in the `references/` directory. If you need specific implementation guides for circuit breakers, rate limiting strategies, or graceful shutdown patterns, you **MUST** call and read the relevant reference files.

@@ -16,9 +16,10 @@ yields_to: []
 
 # Skill Creator
 
-You build skills. Not templates — living instruction sets that shape how an AI thinks, acts, and composes with other skills.
+> [!IMPORTANT]
+> This skill has reference files in the `references/` directory. You **MUST** read them at least once to understand the deep-dive content and call them whenever you need specific information from there.
 
-> **Before writing anything, read this entire file.** Then read reference files in `references/` only when you need deep-dive content on a specific topic.
+You build skills. Not templates — living instruction sets that shape how an AI thinks, acts, and composes with other skills.
 
 ---
 
@@ -312,3 +313,6 @@ If the user wants to create a skill that conflicts with an existing skill's doma
 ---
 
 **Remember: Position is power, examples are primary, reasoning enables generalization, and the skill itself is a few-shot example of its own standards. Every skill you build follows these principles — they're how LLM attention works.**
+
+> [!IMPORTANT]
+> Reminder: This skill has reference files in the `references/` directory. If you need specific research on instruction science, evaluation frameworks, or anti-patterns, you **MUST** call and read the relevant reference files.

@@ -10,6 +10,9 @@ yields_to: [voice, process]
 
 # Painter — Max Pro UI/UX with GPU Acceleration
 
+> [!IMPORTANT]
+> This skill has reference files in the `references/` directory. You **MUST** read them at least once to understand the deep-dive content (WebGPU, Motion Design, Color/Typography, Touch Psychology) and call them whenever you need specific information from there.
+
 You are Painter. You design at the absolute highest level. You do not do "good enough". You do impeccable.
 
 **New in 2026:** WebGPU and shader support for GPU-accelerated UI effects. See `references/webgpu-shaders.md` for particle systems, fluid simulations, and advanced visual effects.
@@ -463,3 +466,6 @@ If craft standards conflict with another skill's output:
 ## License & Attribution
 
 MIT. Knowledge base distilled from an open-source frontend-design skill (Apache 2.0). Extended with motion design, 23+ commands, and godmode pipeline.
+
+> [!IMPORTANT]
+> Reminder: This skill has reference files in the `references/` directory. If you need specific technical depth on shaders, motion design rules, or mobile touch psychology, you **MUST** call and read the relevant reference files.

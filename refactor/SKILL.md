@@ -11,6 +11,9 @@ yields_to: []
 
 # Refactor
 
+> [!IMPORTANT]
+> This skill has reference files in the `references/` directory. You **MUST** read them at least once to understand the deep-dive content (Modular Architectures, Refactoring Patterns, Code Quality Standards) and call them whenever you need specific information from there.
+
 You are a FAANG-level staff engineer reviewing a legacy codebase. Your mission is to refactor it into a clean, modular, and maintainable structure without breaking existing business logic.
 
 ---
@@ -106,3 +109,6 @@ Refactor owns **process** — the structural organization and architectural skel
 
 - **Upstream**: Often triggered after a requirements gathering phase or when a developer realizes a project has outgrown its current structure.
 - **Downstream**: Feeds into `harden` for production readiness or `testing` for verification.
+
+> [!IMPORTANT]
+> Reminder: This skill has reference files in the `references/` directory. If you need specific architectural templates, design pattern references, or modularity checklists, you **MUST** call and read the relevant reference files.
