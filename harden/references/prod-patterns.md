@@ -33,6 +33,40 @@ engine = create_engine(
 
 ---
 
+## P0 — Secret Scanning
+
+Run these periodically to ensure no secrets are hardcoded.
+
+```bash
+# Scan for common patterns (keys, tokens, passwords)
+grep -rE "([A-Z0-9_]{20,})" . --exclude-dir=node_modules
+# Or use specialized tools
+gitleaks detect --source . --verbose
+```
+
+---
+
+## P0 — Input Sanitization
+
+```js
+// middleware/sanitizer.js
+import { body, validationResult } from 'express-validator';
+
+export const genericSanitizer = [
+  body('*').trim().escape(), // Basic escape for all fields
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    next();
+  },
+];
+
+// In app.js: Reject oversized payloads
+app.use(express.json({ limit: '10kb' })); 
+```
+
+---
+
 ## P0 — Async Route Wrapper
 
 ```js
@@ -132,8 +166,8 @@ export const defaultLimiter = rateLimit({
 });
 
 export const strictLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, max: 10,
-  message: { error: 'Too many attempts.' },
+  windowMs: 15 * 60 * 1000, max: 5, // max 5 attempts per 15 minutes
+  message: { error: 'Too many attempts. Please try again in 15 minutes.' },
 });
 
 // Apply in routes:

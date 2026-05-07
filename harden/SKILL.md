@@ -2,8 +2,8 @@
 name: harden
 description: >
   Use this skill whenever the user wants to make a codebase production-ready, scale to 1M+ users, 
-  or harden existing modular code. Triggers on "harden my code", "prepare for launch", 
-  "add caching/rate limiting", or "make it scalable". Do NOT use if the codebase needs 
+  or harden existing modular code against vulnerabilities. Triggers on "harden my code", "prepare for launch", 
+  "add caching/rate limiting", "secure my app", "fix vulnerabilities", or "make it scalable". Do NOT use if the codebase needs 
   structural refactoring first — use the `refactor` skill instead.
 domain: craft
 composable: true
@@ -21,20 +21,23 @@ You are a FAANG-level SRE and backend architect. Your mission is to harden an al
 
 ## When to Use
 
-- User asks for "production hardening" or "scaling".
+- User asks for "production hardening", "scaling", or "security audit".
 - Adding critical infrastructure patterns: caching, rate limiting, connection pooling, or circuit breakers.
 - Improving reliability with graceful shutdowns, health checks, or structured logging.
+- Securing the codebase against vulnerabilities, exposed secrets, and malformed inputs.
 - **Prerequisite**: The codebase must already be modular. If it's a mess, use `refactor` first.
 
 ---
 
 ## Core Instructions
 
-1. **Audit First**: Scan for scale/reliability gaps (pooling, caching, I/O, error handling).
+1. **Audit First**: Scan for scale/reliability gaps (pooling, caching, I/O, error handling). Run a full security audit and report any remaining vulnerabilities.
 2. **Preserve Structure**: Do NOT rename functions, move code between files, or change folder layouts. Your job is to inject patterns, not move furniture.
-3. **P0 Priority**: Connection pooling and async I/O are non-negotiable. If it crashes under load, fix it first.
-4. **Reliability**: Implement graceful shutdowns (SIGTERM handling) and health check endpoints (`/health`).
-5. **Observability**: Replace `console.log` with structured logging.
+3. **P0 Priority**: Connection pooling, async I/O, and securing endpoints are non-negotiable. If it crashes under load or is insecure, fix it first.
+4. **Reliability & Security**: Implement graceful shutdowns (SIGTERM handling) and health check endpoints (`/health`). Sanitise all user inputs and reject anything oversized or malformed.
+5. **Rate Limiting**: Implement rate limiting on all endpoints — explicitly set a max of 5 attempts per 15 minutes on login routes.
+6. **Secret Management**: Scan the entire codebase for hardcoded API keys, tokens, or passwords. Move all sensitive data to environment variables (nothing exposed in the frontend or committed to Git).
+7. **Observability**: Replace `console.log` with structured logging.
 
 ---
 
@@ -44,6 +47,7 @@ Produce a **Production Readiness Report** identifying gaps in:
 - **Scale**: Pooling, caching, rate limiting, async I/O.
 - **Reliability**: Error boundaries, graceful shutdown, health checks.
 - **Safety**: Env-vars, stateless sessions, feature flags.
+- **Security**: Hardcoded API keys, tokens, or passwords. Oversized or malformed input handling. Report any remaining vulnerabilities from a full security audit.
 
 Confirm with the user before proceeding.
 
@@ -70,6 +74,9 @@ Provide a final checklist confirming:
 - Connection pooling is active.
 - No synchronous I/O remains in critical paths.
 - Health checks and graceful shutdowns are implemented.
+- Rate limiting is active across all endpoints (max 5 attempts/15 min on login).
+- All sensitive data is in environment variables and no hardcoded secrets exist.
+- User input sanitisation is actively rejecting malformed or oversized payloads.
 - Original logic and signatures remain untouched.
 
 ---
