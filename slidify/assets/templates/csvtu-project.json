@@ -1,0 +1,53 @@
+{
+  "name": "csvtu-project",
+  "extends": "default",
+  "palette": {
+    "primary":   "1B3A5C",
+    "accent":    "D4A843",
+    "text":      "1A1A1A",
+    "muted":     "64748B",
+    "bg":        "FFFFFF",
+    "dark_bg":   "1B3A5C"
+  },
+  "fonts": {
+    "title": "Calibri",
+    "body":  "Calibri",
+    "mono":  "Consolas"
+  },
+  "watermarks": [
+    {
+      "type": "image",
+      "path": "src/logo.png",
+      "position": "top-left",
+      "opacity": 20,
+      "w": 0.7,
+      "h": 0.7,
+      "margin": 0.15,
+      "skip_slide_types": ["title", "closing"]
+    },
+    {
+      "type": "text",
+      "text": "20 May 2026",
+      "position": "bottom-center",
+      "opacity": 18,
+      "fontSize": 10,
+      "color": "9CA3AF",
+      "w": 2.5,
+      "h": 0.3,
+      "margin": 0.15
+    }
+  ],
+  "footer": {
+    "enabled":  true,
+    "left":     "UTD, Department of CSE, CSVTU Bhilai",
+    "center":   "",
+    "right":    "Slide {n} of {total}",
+    "fontSize": 8,
+    "color":    "9CA3AF",
+    "y":        5.32,
+    "skip_slide_types": ["title", "closing"]
+  },
+  "title_slide":   { "bg": "dark_bg", "show_footer": false },
+  "section_slide": { "bg": "dark_bg" },
+  "closing_slide": { "bg": "dark_bg", "show_footer": false }
+}

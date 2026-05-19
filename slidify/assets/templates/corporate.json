@@ -1,0 +1,36 @@
+{
+  "name": "corporate",
+  "extends": "default",
+  "palette": {
+    "primary":   "0F766E",
+    "accent":    "14B8A6",
+    "text":      "1E293B",
+    "muted":     "64748B",
+    "bg":        "FFFFFF",
+    "dark_bg":   "134E4A"
+  },
+  "watermark": {
+    "enabled":  true,
+    "type":     "image",
+    "path":     "assets/logo.png",
+    "position": "top-right",
+    "opacity":  18,
+    "w":        0.75,
+    "h":        0.75,
+    "margin":   0.15,
+    "skip_slide_types": ["title"]
+  },
+  "footer": {
+    "enabled":  true,
+    "left":     "{author}",
+    "center":   "{title}",
+    "right":    "{n} / {total}",
+    "fontSize": 8,
+    "color":    "94A3B8",
+    "y":        5.32,
+    "skip_slide_types": ["title", "closing"]
+  },
+  "title_slide":   { "bg": "dark_bg", "show_footer": false },
+  "section_slide": { "bg": "dark_bg" },
+  "closing_slide": { "bg": "dark_bg", "show_footer": false }
+}

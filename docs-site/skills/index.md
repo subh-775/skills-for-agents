@@ -1,6 +1,6 @@
 # Skills
 
-13 production-ready skills for AI agents. Each owns one domain and composes cleanly with others.
+14 production-ready skills for AI agents. Each owns one domain and composes cleanly with others.
 
 ::: tip Domain Separation
 Skills from different domains compose without conflict. Skills from the same domain follow precedence rules defined in the [SIP Framework](/guide/sip-framework).
@@ -37,6 +37,7 @@ Skills from different domains compose without conflict. Skills from the same dom
 | [Postmortem](./postmortem) | Blameless incident documentation. 5 Whys, action items. | `/postmortem`, "incident review", "what broke and why" |
 | [Refactor](./refactor) | Restructure messy codebases into clean, modular architecture. | "refactor my project", "clean up my code", "split this file" |
 | [Skill Creator](./skill-creator) | Meta-skill for creating, auditing, and improving other skills. | `/create-skill`, "make a skill", "turn this into a skill" |
+| [Slidify](./slidify) | End-to-end PowerPoint generator. JSON specs, templates, auto speaker notes. | `/slidify`, "make a presentation", "create slides", "generate pptx" |
 
 ### Content
 
@@ -63,6 +64,7 @@ Skills from different domains compose without conflict. Skills from the same dom
 | Refactor | Process | ~250 | Low | Code restructuring |
 | Researcher | Content | ~600 | Medium | Web research |
 | Skill Creator | Process | ~500 | Medium | Skill development |
+| Slidify | Process | ~200 | Medium | PPTX generation |
 
 ## Composition Examples
 

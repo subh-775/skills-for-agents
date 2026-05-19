@@ -1,0 +1,35 @@
+{
+  "name": "conference",
+  "extends": "default",
+  "palette": {
+    "primary":   "065A82",
+    "accent":    "02C39A",
+    "text":      "1A1A1A",
+    "muted":     "6B7280",
+    "bg":        "FAFAFA",
+    "dark_bg":   "065A82"
+  },
+  "watermark": {
+    "enabled":  true,
+    "type":     "image",
+    "path":     "assets/logo.png",
+    "position": "top-right",
+    "opacity":  22,
+    "w":        0.8,
+    "h":        0.8,
+    "margin":   0.2,
+    "skip_slide_types": ["title"]
+  },
+  "footer": {
+    "enabled":  true,
+    "left":     "{author}",
+    "center":   "{title}",
+    "right":    "Slide {n} of {total}",
+    "fontSize": 8,
+    "color":    "9CA3AF",
+    "y":        5.32,
+    "skip_slide_types": ["title", "closing"]
+  },
+  "title_slide":   { "bg": "dark_bg", "show_footer": false },
+  "closing_slide": { "bg": "dark_bg", "show_footer": false }
+}

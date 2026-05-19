@@ -1,0 +1,41 @@
+{
+  "name": "csvtu",
+  "extends": "default",
+  "palette": {
+    "primary":   "1B3A5C",
+    "accent":    "D4A843",
+    "text":      "1A1A1A",
+    "muted":     "64748B",
+    "bg":        "FFFFFF",
+    "dark_bg":   "1B3A5C"
+  },
+  "fonts": {
+    "title": "Calibri",
+    "body":  "Calibri",
+    "mono":  "Consolas"
+  },
+  "watermark": {
+    "enabled":  true,
+    "type":     "image",
+    "path":     "src/logo.png",
+    "position": "bottom-right",
+    "opacity":  15,
+    "w":        0.85,
+    "h":        0.85,
+    "margin":   0.2,
+    "skip_slide_types": ["title", "closing"]
+  },
+  "footer": {
+    "enabled":  true,
+    "left":     "UTD, CSVTU Bhilai",
+    "center":   "",
+    "right":    "{n} / {total}",
+    "fontSize": 8,
+    "color":    "9CA3AF",
+    "y":        5.32,
+    "skip_slide_types": ["title", "closing"]
+  },
+  "title_slide":   { "bg": "dark_bg", "show_footer": false },
+  "section_slide": { "bg": "dark_bg" },
+  "closing_slide": { "bg": "dark_bg", "show_footer": false }
+}

@@ -98,6 +98,7 @@ Each skill is a self-contained folder with a `SKILL.md` file. Point your agent t
 | **[Postmortem](postmortem/)** | Blameless incident documentation. 5 Whys, action items. | `/postmortem`, "incident review", "what broke and why" |
 | **[Refactor](refactor/)** | Restructure messy codebases into clean, modular architecture. | "refactor my project", "clean up my code", "split this file" |
 | **[Skill Creator](skill-creator/)** | Meta-skill for creating, auditing, and improving other skills. | `/create-skill`, "make a skill", "turn this into a skill" |
+| **[Slidify](slidify/)** | End-to-end PowerPoint generator. JSON specs, templates, auto speaker notes. | `/slidify`, "make a presentation", "create slides", "generate pptx" |
 
 ### Content
 
@@ -123,8 +124,8 @@ Skills Interoperability Protocol ensures every skill knows how to compose with o
 ### ⚡ Production-Ready
 Battle-tested skills for ML research, documentation, UI/UX, incident response, and more.
 
-### 🎨 13 Skills Included
-Blogger, Caveman, Compress, Documenter, Harden, Learn, Memory, ML Engine, Painter, Postmortem, Refactor, Researcher, Skill Creator.
+### 🎨 14 Skills Included
+Blogger, Caveman, Compress, Documenter, Harden, Learn, Memory, ML Engine, Painter, Postmortem, Refactor, Researcher, Skill Creator, Slidify.
 
 ### 🚀 Framework-Agnostic
 Drop into any agent framework. Works with any LLM that supports system prompts.

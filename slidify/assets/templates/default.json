@@ -1,0 +1,23 @@
+{
+  "name": "default",
+  "palette": {
+    "primary":   "1E3A5F",
+    "secondary": "FFFFFF",
+    "accent":    "2563EB",
+    "text":      "1A1A1A",
+    "muted":     "6B7280",
+    "bg":        "FFFFFF",
+    "dark_bg":   "1E3A5F"
+  },
+  "fonts": {
+    "title": "Calibri",
+    "body":  "Calibri",
+    "mono":  "Consolas"
+  },
+  "watermark": { "enabled": false },
+  "header":    { "enabled": false },
+  "footer":    { "enabled": false },
+  "title_slide":   { "bg": "dark_bg", "show_footer": false },
+  "section_slide": { "bg": "dark_bg" },
+  "closing_slide": { "bg": "dark_bg", "show_footer": false }
+}
