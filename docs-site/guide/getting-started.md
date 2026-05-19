@@ -17,7 +17,7 @@ A skill is a **dense compression of expertise into instructions an AI can follow
 Install all skills to your AI coding tools with a single command:
 
 ```bash
-npx antigravity-skills install
+npx skills-for-agents install
 ```
 
 This auto-detects which tools you have installed and copies skills to the right places.
@@ -25,17 +25,17 @@ This auto-detects which tools you have installed and copies skills to the right 
 **Target a specific tool:**
 
 ```bash
-npx antigravity-skills install --tool claude
-npx antigravity-skills install --tool cursor
-npx antigravity-skills install --tool windsurf
-npx antigravity-skills install --tool codex
-npx antigravity-skills install --tool antigravity
+npx skills-for-agents install --tool claude
+npx skills-for-agents install --tool cursor
+npx skills-for-agents install --tool windsurf
+npx skills-for-agents install --tool codex
+npx skills-for-agents install --tool antigravity
 ```
 
 **Install to current project:**
 
 ```bash
-npx antigravity-skills install --project
+npx skills-for-agents install --project
 ```
 
 This creates tool-specific files in your project directory:
@@ -47,13 +47,13 @@ This creates tool-specific files in your project directory:
 **Install specific skills only:**
 
 ```bash
-npx antigravity-skills install --only caveman,blogger,slidify
+npx skills-for-agents install --only caveman,blogger,slidify
 ```
 
 **List available skills:**
 
 ```bash
-npx antigravity-skills list
+npx skills-for-agents list
 ```
 
 ### Via git clone (manual)

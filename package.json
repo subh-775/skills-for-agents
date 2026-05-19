@@ -1,9 +1,9 @@
 {
-  "name": "antigravity-skills",
+  "name": "skills-for-agents",
   "version": "1.0.0",
   "description": "15 composable skills for AI coding agents — install via npx",
   "bin": {
-    "ag-skills": "./bin/cli.js"
+    "skills-for-agents": "./bin/cli.js"
   },
   "files": [
     "bin/",
@@ -18,8 +18,7 @@
     "windsurf",
     "codex",
     "agents",
-    "openclaude",
-    "antigravity"
+    "openclaude"
   ],
   "license": "MIT",
   "repository": {

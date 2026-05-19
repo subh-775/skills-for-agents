@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 
 /**
- * antigravity-skills CLI
+ * skills-for-agents CLI
  *
  * Usage:
- *   npx antigravity-skills install          Install all skills to detected tools
- *   npx antigravity-skills install --tool claude
- *   npx antigravity-skills install --tool cursor --tool windsurf
- *   npx antigravity-skills install --project
- *   npx antigravity-skills install --only caveman,blogger
- *   npx antigravity-skills list             List available skills
- *   npx antigravity-skills --help           Show help
+ *   npx skills-for-agents install          Install all skills to detected tools
+ *   npx skills-for-agents install --tool claude
+ *   npx skills-for-agents install --tool cursor --tool windsurf
+ *   npx skills-for-agents install --project
+ *   npx skills-for-agents install --only caveman,blogger
+ *   npx skills-for-agents list             List available skills
+ *   npx skills-for-agents --help           Show help
  */
 
 const { install, listSkills, TOOLS } = require("../src/installer");
@@ -53,10 +53,10 @@ function parseFlags(args) {
 // ─── Help ───────────────────────────────────────────────────────────────────
 function showHelp() {
   console.log(`
-  antigravity-skills — Install composable AI agent skills
+  skills-for-agents — Install composable AI agent skills
 
   USAGE:
-    npx antigravity-skills <command> [options]
+    npx skills-for-agents <command> [options]
 
   COMMANDS:
     install          Install skills to your AI coding tools
@@ -72,11 +72,11 @@ function showHelp() {
     --only <skills>  Install specific skills (comma-separated)
 
   EXAMPLES:
-    npx antigravity-skills install
-    npx antigravity-skills install --tool claude
-    npx antigravity-skills install --tool cursor --tool windsurf --project
-    npx antigravity-skills install --only caveman,blogger,slidify
-    npx antigravity-skills list
+    npx skills-for-agents install
+    npx skills-for-agents install --tool claude
+    npx skills-for-agents install --tool cursor --tool windsurf --project
+    npx skills-for-agents install --only caveman,blogger,slidify
+    npx skills-for-agents list
   `);
 }
 
@@ -106,7 +106,7 @@ async function main() {
   }
 
   console.error(`Unknown command: ${command}`);
-  console.error("Run 'npx antigravity-skills --help' for usage.");
+  console.error("Run 'npx skills-for-agents --help' for usage.");
   process.exit(1);
 }
 

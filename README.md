@@ -38,23 +38,23 @@ Result: skills that compose without breaking each other.
 
 ```bash
 # Install all skills to all detected tools
-npx antigravity-skills install
+npx skills-for-agents install
 
 # Install to a specific tool
-npx antigravity-skills install --tool claude
-npx antigravity-skills install --tool cursor
-npx antigravity-skills install --tool windsurf
-npx antigravity-skills install --tool codex
-npx antigravity-skills install --tool antigravity
+npx skills-for-agents install --tool claude
+npx skills-for-agents install --tool cursor
+npx skills-for-agents install --tool windsurf
+npx skills-for-agents install --tool codex
+npx skills-for-agents install --tool antigravity
 
 # Install to current project directory
-npx antigravity-skills install --project
+npx skills-for-agents install --project
 
 # Install specific skills only
-npx antigravity-skills install --only caveman,blogger,slidify
+npx skills-for-agents install --only caveman,blogger,slidify
 
 # List available skills
-npx antigravity-skills list
+npx skills-for-agents list
 ```
 
 **Via git clone (manual):**
