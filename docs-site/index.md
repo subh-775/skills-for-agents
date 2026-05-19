@@ -31,13 +31,31 @@ features:
     details: Battle-tested skills for ML research, documentation, UI/UX, incident response, and more.
   
   - icon: 🎨
-    title: 13 Skills Included
-    details: Blogger, Caveman, Compress, Documenter, Harden, Learn, Memory, ML Engine, Painter, Postmortem, Refactor, Researcher, Skill Creator.
-  
+    title: 15 Skills Included
+    details: Blogger, Caveman, Compress, Documenter, Harden, Learn, Memory, ML Engine, Painter, Planner, Postmortem, Refactor, Researcher, Skill Creator, Slidify.
+
   - icon: 🚀
     title: Framework-Agnostic
     details: Drop into any agent framework. Works with any LLM that supports system prompts.
+
+  - icon: 📦
+    title: npx Install
+    details: One command to install skills to Claude Code, Cursor, Windsurf, Codex, or Antigravity.
 ---
+
+## Quick Install
+
+```bash
+# Install all skills to your AI coding tool
+npx skills-for-agents install
+
+# Or target a specific tool
+npx skills-for-agents install --tool cursor
+npx skills-for-agents install --tool claude
+npx skills-for-agents install --tool windsurf
+```
+
+[Full installation guide →](/guide/getting-started#installation)
 
 ## Quick Example
 
@@ -79,17 +97,19 @@ Result: skills that compose without breaking each other.
 | [Memory](/skills/memory) | Process | Persistent context engine. Daily journal rotation, manifest indexing. |
 | [ML Engine](/skills/ml-engine) | Process | TPU-first ML research. Distributed training, MoE, Pallas kernels. |
 | [Painter](/skills/painter) | Craft | Max pro UI/UX design. Animation, color, typography, accessibility. |
+| [Planner](/skills/planner) | Process | Project plans with PRDs, design docs, architecture flows, task breakdowns. |
 | [Postmortem](/skills/postmortem) | Process | Blameless incident documentation. 5 Whys, action items. |
 | [Refactor](/skills/refactor) | Process | Restructure messy codebases into clean, modular architecture. |
 | [Researcher](/skills/researcher) | Content | Deep web research. Diverse sources, cross-referencing, synthesis. |
 | [Learn](/skills/learn) | Content | Structured study plans, topic guides, exam prediction, and active recall. |
 | [Skill Creator](/skills/skill-creator) | Process | Meta-skill for creating, auditing, and improving other skills. |
+| [Slidify](/skills/slidify) | Process | End-to-end PowerPoint generator. JSON specs, templates, auto speaker notes. |
 
 ## Get Started
 
-1. **Read the [Getting Started Guide](/guide/getting-started)** — understand the basics
-2. **Learn the [SIP Framework](/guide/sip-framework)** — how skills compose
-3. **Explore [Skills](/skills/)** — see what's available
+1. **Install** — `npx skills-for-agents install` ([guide](/guide/getting-started#installation))
+2. **Learn SIP Framework** — [how skills compose](/guide/sip-framework)
+3. **Explore [Skills](/skills/)** — see all 15 skills
 4. **[Create Your Own](/guide/creating-skills)** — build custom skills
 
 ## License

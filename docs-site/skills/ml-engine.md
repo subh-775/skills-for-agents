@@ -55,5 +55,5 @@ yields_to: [craft, voice]
 
 ## Resources
 
-- [Full SKILL.md](https://github.com/IsNoobgrammer/skills-for-agents/blob/main/ml-engine/SKILL.md)
+- [Full SKILL.md](https://github.com/IsNoobgrammer/skills-for-agents/blob/main/skills/ml-engine/SKILL.md)
 - [References](https://github.com/IsNoobgrammer/skills-for-agents/tree/main/ml-engine/references)

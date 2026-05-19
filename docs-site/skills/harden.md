@@ -49,4 +49,4 @@ yields_to: [process]
 
 ## Resources
 
-- [Full SKILL.md](https://github.com/IsNoobgrammer/skills-for-agents/blob/main/harden/SKILL.md)
+- [Full SKILL.md](https://github.com/IsNoobgrammer/skills-for-agents/blob/main/skills/harden/SKILL.md)

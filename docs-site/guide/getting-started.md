@@ -215,11 +215,15 @@ list skills
 /blog technical + /caveman lite
 ```
 
+[Blogger](/skills/blogger) writes, [Caveman](/skills/caveman) compresses.
+
 ### Production-Ready Code
 
 ```
 /refactor → /harden
 ```
+
+[Refactor](/skills/refactor) restructures, [Harden](/skills/harden) adds production patterns.
 
 ### Comprehensive Docs
 
@@ -227,17 +231,31 @@ list skills
 /documenter + /researcher
 ```
 
+[Researcher](/skills/researcher) gathers context, [Documenter](/skills/documenter) structures it.
+
 ### Incident Response
 
 ```
 /postmortem → /compress
 ```
 
+[Postmortem](/skills/postmortem) generates report, [Compress](/skills/compress) shrinks it.
+
 ### ML Research
 
 ```
 /ml-engine + /researcher
 ```
+
+[Researcher](/skills/researcher) finds prior work, [ML Engine](/skills/ml-engine) implements experiments.
+
+### Presentation from Report
+
+```
+/documenter → /slidify
+```
+
+[Documenter](/skills/documenter) writes the content, [Slidify](/skills/slidify) generates slides.
 
 ## Troubleshooting
 

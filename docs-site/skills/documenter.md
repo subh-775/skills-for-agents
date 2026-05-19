@@ -53,4 +53,4 @@ yields_to: [process, craft]
 
 ## Resources
 
-- [Full SKILL.md](https://github.com/IsNoobgrammer/skills-for-agents/blob/main/documenter/SKILL.md)
+- [Full SKILL.md](https://github.com/IsNoobgrammer/skills-for-agents/blob/main/skills/documenter/SKILL.md)

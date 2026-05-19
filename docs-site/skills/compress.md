@@ -71,4 +71,4 @@ Compress owns **file-level density**. NOT live responses (that's caveman).
 
 ## Resources
 
-- [Full SKILL.md](https://github.com/IsNoobgrammer/skills-for-agents/blob/main/compress/SKILL.md)
+- [Full SKILL.md](https://github.com/IsNoobgrammer/skills-for-agents/blob/main/skills/compress/SKILL.md)

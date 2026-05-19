@@ -79,11 +79,13 @@ Blogger owns **voice** — tone, personality, vocabulary, emotional register.
 
 ## Related Skills
 
-- [Caveman](./caveman) — density skill that composes well
+- [Caveman](./caveman) — density skill that composes well with blogger
 - [Postmortem](./postmortem) — process skill for incident writing
 - [Documenter](./documenter) — content skill for technical docs
+- [Compress](./compress) — file compression for blog drafts
+- [Researcher](./researcher) — gather context before writing
 
 ## Resources
 
-- [Full SKILL.md](https://github.com/IsNoobgrammer/skills-for-agents/blob/main/blogger/SKILL.md) — complete voice guide
+- [Full SKILL.md](https://github.com/IsNoobgrammer/skills-for-agents/blob/main/skills/blogger/SKILL.md) — complete voice guide
 - [SIP Framework](/guide/sip-framework) — how blogger composes

@@ -63,4 +63,4 @@ yields_to: [voice, craft]
 
 ## Resources
 
-- [Full SKILL.md](https://github.com/IsNoobgrammer/skills-for-agents/blob/main/memory/SKILL.md)
+- [Full SKILL.md](https://github.com/IsNoobgrammer/skills-for-agents/blob/main/skills/memory/SKILL.md)

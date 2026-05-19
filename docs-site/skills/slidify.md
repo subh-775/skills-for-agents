@@ -82,7 +82,9 @@ Process owns slide structure. Craft handles visual design decisions. Content ski
 - [Documenter](./documenter) — generate report content to convert into slides
 - [Researcher](./researcher) — gather context for presentation content
 - [Painter](./painter) — visual design guidance for templates
+- [Blogger](./blogger) — write speaker notes in authentic voice
+- [Learn](./learn) — study plans that can become slide decks
 
 ## Resources
 
-- [Full SKILL.md](https://github.com/IsNoobgrammer/skills-for-agents/blob/main/slidify/SKILL.md)
+- [Full SKILL.md](https://github.com/IsNoobgrammer/skills-for-agents/blob/main/skills/slidify/SKILL.md)
