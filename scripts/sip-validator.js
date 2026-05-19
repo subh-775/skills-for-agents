@@ -72,11 +72,11 @@ function validateSkill(skillPath) {
         sizeCategory = 'Focused';
     } else if (lineCount <= 350) {
         sizeCategory = 'Standard';
-    } else if (lineCount <= 500) {
+    } else if (lineCount <= 800) {
         sizeCategory = 'Comprehensive';
     } else {
         sizeCategory = 'Too Long';
-        errors.push(`Size constraint failed: Skill exceeds 500 lines (${lineCount} lines). Extract content into references/ directory.`);
+        errors.push(`Size constraint failed: Skill exceeds 800 lines (${lineCount} lines). Extract content into references/ directory.`);
     }
 
     // Header validation

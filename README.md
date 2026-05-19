@@ -34,6 +34,31 @@ Result: skills that compose without breaking each other.
 
 ### Installation
 
+**Via npx (recommended):**
+
+```bash
+# Install all skills to all detected tools
+npx antigravity-skills install
+
+# Install to a specific tool
+npx antigravity-skills install --tool claude
+npx antigravity-skills install --tool cursor
+npx antigravity-skills install --tool windsurf
+npx antigravity-skills install --tool codex
+npx antigravity-skills install --tool antigravity
+
+# Install to current project directory
+npx antigravity-skills install --project
+
+# Install specific skills only
+npx antigravity-skills install --only caveman,blogger,slidify
+
+# List available skills
+npx antigravity-skills list
+```
+
+**Via git clone (manual):**
+
 ```bash
 git clone https://github.com/IsNoobgrammer/skills-for-agents.git
 ```
@@ -73,40 +98,41 @@ Each skill is a self-contained folder with a `SKILL.md` file. Point your agent t
 
 | Skill | Description | Triggers |
 |-------|-------------|----------|
-| **[Blogger](blogger/)** | Authentic personal-voice writing. Raw, unpolished, stream-of-consciousness prose. | `/blog`, "write a blog", "write like me" |
+| **[Blogger](skills/blogger/)** | Authentic personal-voice writing. Raw, unpolished, stream-of-consciousness prose. | `/blog`, "write a blog", "write like me" |
 
 ### Density
 
 | Skill | Description | Triggers |
 |-------|-------------|----------|
-| **[Caveman](caveman/)** | Ultra-terse communication. Cuts token usage ~75%. | `/caveman`, "talk like caveman", "less tokens" |
-| **[Compress](compress/)** | File compression. 4 intensity levels. Preserves all meaning. | `/compress`, "compress this", "reduce tokens" |
+| **[Caveman](skills/caveman/)** | Ultra-terse communication. Cuts token usage ~75%. | `/caveman`, "talk like caveman", "less tokens" |
+| **[Compress](skills/compress/)** | File compression. 4 intensity levels. Preserves all meaning. | `/compress`, "compress this", "reduce tokens" |
 
 ### Craft
 
 | Skill | Description | Triggers |
 |-------|-------------|----------|
-| **[Painter](painter/)** | Max pro UI/UX design. Animation, color, typography, accessibility. 20+ commands. | `/painter`, "make it look pro", "fix the ui" |
-| **[Harden](harden/)** | Production-harden code for 1M+ users. Caching, rate limiting, graceful shutdown. | "harden my code", "prepare for launch", "make it scalable" |
+| **[Painter](skills/painter/)** | Max pro UI/UX design. Animation, color, typography, accessibility. 20+ commands. | `/painter`, "make it look pro", "fix the ui" |
+| **[Harden](skills/harden/)** | Production-harden code for 1M+ users. Caching, rate limiting, graceful shutdown. | "harden my code", "prepare for launch", "make it scalable" |
 
 ### Process
 
 | Skill | Description | Triggers |
 |-------|-------------|----------|
-| **[Memory](memory/)** | Persistent context engine. Daily journal rotation, manifest indexing, identity tracking. | Startup (mandatory), "I like X", "Here is my key" |
-| **[ML Engine](ml-engine/)** | TPU-first ML research. Distributed training, MoE, Pallas kernels. 12+ commands. | `/ml`, TPU mentions, distributed training |
-| **[Postmortem](postmortem/)** | Blameless incident documentation. 5 Whys, action items. | `/postmortem`, "incident review", "what broke and why" |
-| **[Refactor](refactor/)** | Restructure messy codebases into clean, modular architecture. | "refactor my project", "clean up my code", "split this file" |
-| **[Skill Creator](skill-creator/)** | Meta-skill for creating, auditing, and improving other skills. | `/create-skill`, "make a skill", "turn this into a skill" |
-| **[Slidify](slidify/)** | End-to-end PowerPoint generator. JSON specs, templates, auto speaker notes. | `/slidify`, "make a presentation", "create slides", "generate pptx" |
+| **[Memory](skills/memory/)** | Persistent context engine. Daily journal rotation, manifest indexing, identity tracking. | Startup (mandatory), "I like X", "Here is my key" |
+| **[ML Engine](skills/ml-engine/)** | TPU-first ML research. Distributed training, MoE, Pallas kernels. 12+ commands. | `/ml`, TPU mentions, distributed training |
+| **[Planner](skills/planner/)** | Project plans with PRDs, design docs, architecture flows, task breakdowns. | `/plan`, "create a PRD", "design the architecture" |
+| **[Postmortem](skills/postmortem/)** | Blameless incident documentation. 5 Whys, action items. | `/postmortem`, "incident review", "what broke and why" |
+| **[Refactor](skills/refactor/)** | Restructure messy codebases into clean, modular architecture. | "refactor my project", "clean up my code", "split this file" |
+| **[Skill Creator](skills/skill-creator/)** | Meta-skill for creating, auditing, and improving other skills. | `/create-skill`, "make a skill", "turn this into a skill" |
+| **[Slidify](skills/slidify/)** | End-to-end PowerPoint generator. JSON specs, templates, auto speaker notes. | `/slidify`, "make a presentation", "create slides", "generate pptx" |
 
 ### Content
 
 | Skill | Description | Triggers |
 |-------|-------------|----------|
-| **[Documenter](documenter/)** | Comprehensive documentation. Examples, guides, API references. | "document this", "write docs", "create documentation" |
-| **[Learn](learn/)** | Structured study plans, topic guides, exam prediction, and active recall. | `/learn`, "teach me X", "how do I learn Y" |
-| **[Researcher](researcher/)** | Deep web research. Diverse sources, cross-referencing, synthesis. | "research X", "find info about Y", "what's the latest on Z" |
+| **[Documenter](skills/documenter/)** | Comprehensive documentation. Examples, guides, API references. | "document this", "write docs", "create documentation" |
+| **[Learn](skills/learn/)** | Structured study plans, topic guides, exam prediction, and active recall. | `/learn`, "teach me X", "how do I learn Y" |
+| **[Researcher](skills/researcher/)** | Deep web research. Diverse sources, cross-referencing, synthesis. | "research X", "find info about Y", "what's the latest on Z" |
 
 ---
 
@@ -124,8 +150,8 @@ Skills Interoperability Protocol ensures every skill knows how to compose with o
 ### ⚡ Production-Ready
 Battle-tested skills for ML research, documentation, UI/UX, incident response, and more.
 
-### 🎨 14 Skills Included
-Blogger, Caveman, Compress, Documenter, Harden, Learn, Memory, ML Engine, Painter, Postmortem, Refactor, Researcher, Skill Creator, Slidify.
+### 🎨 15 Skills Included
+Blogger, Caveman, Compress, Documenter, Harden, Learn, Memory, ML Engine, Painter, Planner, Postmortem, Refactor, Researcher, Skill Creator, Slidify.
 
 ### 🚀 Framework-Agnostic
 Drop into any agent framework. Works with any LLM that supports system prompts.

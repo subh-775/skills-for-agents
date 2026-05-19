@@ -1,6 +1,6 @@
 # Skills
 
-14 production-ready skills for AI agents. Each owns one domain and composes cleanly with others.
+15 production-ready skills for AI agents. Each owns one domain and composes cleanly with others.
 
 ::: tip Domain Separation
 Skills from different domains compose without conflict. Skills from the same domain follow precedence rules defined in the [SIP Framework](/guide/sip-framework).
@@ -34,6 +34,7 @@ Skills from different domains compose without conflict. Skills from the same dom
 |-------|-------------|----------|
 | [Memory](./memory) | Persistent context engine. Daily journal rotation, manifest indexing, identity tracking. | Startup (mandatory), "I like X", "Here is my key" |
 | [ML Engine](./ml-engine) | TPU-first ML research. Distributed training, MoE, Pallas kernels. 12+ commands. | `/ml`, TPU mentions, distributed training |
+| [Planner](./planner) | Project plans with PRDs, design docs, architecture flows, task breakdowns. | `/plan`, "create a PRD", "design the architecture" |
 | [Postmortem](./postmortem) | Blameless incident documentation. 5 Whys, action items. | `/postmortem`, "incident review", "what broke and why" |
 | [Refactor](./refactor) | Restructure messy codebases into clean, modular architecture. | "refactor my project", "clean up my code", "split this file" |
 | [Skill Creator](./skill-creator) | Meta-skill for creating, auditing, and improving other skills. | `/create-skill`, "make a skill", "turn this into a skill" |
@@ -60,6 +61,7 @@ Skills from different domains compose without conflict. Skills from the same dom
 | Memory | Process | ~400 | Medium | Session continuity |
 | ML Engine | Process | ~800 | High | ML research |
 | Painter | Craft | ~1200 | High | UI/UX design |
+| Planner | Process | ~500 | Medium | Project planning |
 | Postmortem | Process | ~300 | Low | Incident response |
 | Refactor | Process | ~250 | Low | Code restructuring |
 | Researcher | Content | ~600 | Medium | Web research |

@@ -12,13 +12,67 @@ A skill is a **dense compression of expertise into instructions an AI can follow
 
 ## Installation
 
-Clone the repo and drop the skills folder into your agent framework:
+### Via npx (recommended)
+
+Install all skills to your AI coding tools with a single command:
+
+```bash
+npx antigravity-skills install
+```
+
+This auto-detects which tools you have installed and copies skills to the right places.
+
+**Target a specific tool:**
+
+```bash
+npx antigravity-skills install --tool claude
+npx antigravity-skills install --tool cursor
+npx antigravity-skills install --tool windsurf
+npx antigravity-skills install --tool codex
+npx antigravity-skills install --tool antigravity
+```
+
+**Install to current project:**
+
+```bash
+npx antigravity-skills install --project
+```
+
+This creates tool-specific files in your project directory:
+- **Cursor**: `.cursor/rules/*.md`
+- **Windsurf**: `.windsurf/rules/*.md`
+- **Codex**: `codex.md` (merged)
+- **Claude Code**: `.claude/skills/*/SKILL.md`
+
+**Install specific skills only:**
+
+```bash
+npx antigravity-skills install --only caveman,blogger,slidify
+```
+
+**List available skills:**
+
+```bash
+npx antigravity-skills list
+```
+
+### Via git clone (manual)
 
 ```bash
 git clone https://github.com/IsNoobgrammer/skills-for-agents.git
 ```
 
 Each skill is a self-contained folder with a `SKILL.md` file. Point your agent to load these files as system prompts.
+
+### Multi-Tool Support
+
+| Tool | Global Install | Project Install | Format |
+|------|:---:|:---:|--------|
+| Antigravity (OpenClaude) | `~/.openclaude/skills/` | — | Full skill folders |
+| Claude Code | `~/.claude/skills/` | `.claude/skills/` | Full skill folders |
+| Cursor | — | `.cursor/rules/` | Individual `.md` files |
+| Windsurf | — | `.windsurf/rules/` | Individual `.md` files |
+| Codex | — | `codex.md` | Single merged file |
 
 ## Your First Skill
 

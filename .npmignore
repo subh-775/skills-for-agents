@@ -1,0 +1,18 @@
+# User-specific data
+**/memory/data/
+
+# CI/CD and docs site
+.github/
+docs/
+docs-site/
+scripts/
+User Info Basic/
+
+# Git
+.git/
+.gitattributes
+.gitignore
+
+# Misc
+*.zip
+.windsurf/

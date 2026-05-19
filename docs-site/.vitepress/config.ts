@@ -54,8 +54,10 @@ export default defineConfig({
             { text: 'Memory', link: '/skills/memory' },
             { text: 'ML Engine', link: '/skills/ml-engine' },
             { text: 'Postmortem', link: '/skills/postmortem' },
+            { text: 'Planner', link: '/skills/planner' },
             { text: 'Refactor', link: '/skills/refactor' },
-            { text: 'Skill Creator', link: '/skills/skill-creator' }
+            { text: 'Skill Creator', link: '/skills/skill-creator' },
+            { text: 'Slidify', link: '/skills/slidify' }
           ]
         },
         {
