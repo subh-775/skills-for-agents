@@ -40,26 +40,26 @@ The single source of truth. Read this file first on every startup — it tells y
 ```json
 {
   "version": 2,
-  "last_updated": "2026-04-28T03:52:00+05:30",
+  "last_updated": "[DATE]",
   "identity": {
-    "name": "Shaurya",
-    "primary_lang": "Python",
-    "updated": "2026-04-28"
+    "name": "[USER_NAME]",
+    "primary_lang": "[LANG]",
+    "updated": "[DATE]"
   },
   "secrets": {
-    "gemini-api": { "file": "vault/gemini.enc", "stored": "2026-04-27", "status": "active" }
+    "[SERVICE_NAME]": { "file": "vault/[SERVICE_NAME].enc", "stored": "[DATE]", "status": "active" }
   },
   "preferences": {
-    "tooling": { "file": "prefs/tooling.md", "updated": "2026-04-28" }
+    "tooling": { "file": "prefs/tooling.md", "updated": "[DATE]" }
   },
   "playbooks": {
-    "deploy-skill": { "file": "playbooks/deploy-skill.md", "updated": "2026-04-28" }
+    "deploy-skill": { "file": "playbooks/deploy-skill.md", "updated": "[DATE]" }
   },
-  "recent_journal": "journal/2026-04-28.md",
+  "recent_journal": "journal/[DATE].md",
   "active_project": {
-    "name": "AntiGravity Skills Ecosystem",
-    "goal": "Building the best AI skill system",
-    "updated": "2026-04-28"
+    "name": "[PROJECT_NAME]",
+    "goal": "[PROJECT_GOAL]",
+    "updated": "[DATE]"
   }
 }
 ```
@@ -155,10 +155,10 @@ Format inside each file:
 One file per service. Contains the raw credential and minimal metadata:
 
 ```
-SERVICE: Gemini API
-KEY: AIzaSy...
-STORED: 2026-04-28
-NOTES: Personal account, free tier
+SERVICE: [SERVICE_NAME]
+KEY: [KEY]
+STORED: [DATE]
+NOTES: [NOTES]
 ```
 
 **Security rules**:
@@ -252,6 +252,15 @@ When you need to find something:
 - **No monolith files**: If any single file exceeds 200 lines, it needs to be split or archived. The whole point of this architecture is preventing bloat
 - **Prefs are latest-wins**: If a preference changes, update in place — don't append a history. The journal already has the change history
 - **Manifest is sacred**: Every data write must be followed by a manifest update. A stale manifest is a broken system
+
+## Self-Verification
+
+After any memory operation, verify:
+- manifest.json is up to date with latest entry
+- Today's journal file exists and has the latest entry
+- Preferences table reflects current user state
+- No sensitive data (API keys, passwords) stored in plaintext
+- Archive entries older than 30 days have been moved
 
 ---
 

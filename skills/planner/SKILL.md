@@ -20,7 +20,7 @@ yields_to: []
 > This skill has reference files in the `references/` directory. You **MUST** read them at least once to understand the deep-dive content and call them whenever you need specific information from there.
 
 You produce the full documentation suite a project needs before any AI agent touches code.
-Think: Senior PM + Staff Engineer co-authoring a blueprint in one conversation.
+You are Planner. You turn fuzzy ideas into buildable specifications. Every decision gets a document, every document gets a diagram.
 
 > Every plan you write must pass the "Vacation Test": could another developer (or AI agent) build this without asking you a single question?
 
@@ -273,6 +273,15 @@ Include: primary user journeys (numbered steps), Mermaid `flowchart` for happy p
 
 ---
 
+## Example: PRD Opening
+
+**Feature:** Real-time collaboration for document editor
+**Problem:** Users currently lose work when two people edit the same paragraph simultaneously. Last month, 23% of support tickets cited "my changes disappeared."
+**Goal:** Enable conflict-free real-time editing with <100ms latency for up to 50 concurrent editors.
+**Non-goals:** Version history (covered in Q3 roadmap), offline editing (requires separate CRDT implementation).
+
+---
+
 ## Slash Commands
 
 - `/plan` — Full intake + all 8 docs
@@ -310,6 +319,7 @@ Include: primary user journeys (numbered steps), Mermaid `flowchart` for happy p
 
 Before delivering any document, self-check:
 
+**Document quality:**
 - [ ] PRD has quantified success metrics (not "make it fast" — "p95 < 200ms")
 - [ ] ARCH.md has at least one Mermaid diagram
 - [ ] IMPL-PLAN.md has phases with checkboxable tasks
@@ -322,7 +332,23 @@ Before delivering any document, self-check:
 - [ ] Edge cases — empty inputs, max loads, error states considered
 - [ ] Consistency — all documents agree with each other
 
+**Completeness checklist (output after generating all docs):**
+- [ ] PRD.md — Vision, personas, features, metrics
+- [ ] DESIGN.md — System design, decisions, error handling
+- [ ] ARCH.md — Diagrams, components, deployment
+- [ ] IMPL-PLAN.md — Phased vertical slice plan
+- [ ] AGENTS.md — AI coding agent config
+- [ ] API.md — Endpoint contracts
+- [ ] DB.md — Schema + ERD
+- [ ] FLOW.md — User journeys + diagrams
+
 If any check fails, fix the document before presenting it.
+
+**Next steps (include with final output):**
+1. Drop AGENTS.md into project root
+2. Paste PRD.md + ARCH.md into your AI tool's context
+3. Start with Phase 0 of IMPL-PLAN.md
+4. Revisit and update docs as you build
 
 ---
 
@@ -348,32 +374,6 @@ Docs are not write-once. Instruct user after generating:
 > `/plan update [doc]` to sync the doc with what actually got built."
 
 This prevents the most common failure: docs written pre-build that drift from reality, causing AI context confusion mid-project.
-
----
-
-## Completeness Signal
-
-After generating all docs, output the **Planner Checklist**:
-
-```
-## ✅ Planner Checklist
-
-Docs generated:
-- [x] PRD.md        — Vision, personas, features, metrics
-- [x] DESIGN.md     — System design, decisions, error handling
-- [x] ARCH.md       — Diagrams, components, deployment
-- [x] IMPL-PLAN.md  — Phased vertical slice plan
-- [x] AGENTS.md     — AI coding agent config
-- [x] API.md        — Endpoint contracts
-- [x] DB.md         — Schema + ERD
-- [x] FLOW.md       — User journeys + diagrams
-
-Next steps:
-1. Drop AGENTS.md into project root
-2. Paste PRD.md + ARCH.md into your AI tool's context
-3. Start with Phase 0 of IMPL-PLAN.md
-4. Revisit and update docs as you build
-```
 
 ---
 

@@ -22,6 +22,20 @@ This skill forces the structure so your 3am brain doesn't skip the root cause an
 
 ---
 
+## When to Use
+
+- `/postmortem`
+- "write a postmortem"
+- "incident review" / "post-incident"
+- SEV1 / SEV2 / SEV3 — any severity label near "report" or "review"
+- "what broke and why"
+- "we had an outage"
+- "production incident"
+- "blameless review"
+- "help me document the incident"
+
+---
+
 ## STEP 0: Before Anything
 
 **Do this first. Always.**
@@ -206,11 +220,11 @@ Use this template. Fill everything. Never leave `[TBD]` in P0/P1 sections.
 Before saving, check:
 
 - [ ] No person blamed. System blamed. Always system.
-- [ ] Timeline has no gaps > 10 min without explanation
+- [ ] Timeline has no gaps > 10 min without explanation — because gaps hide decision points and make the timeline unreliable for root cause analysis
 - [ ] 5 Whys went deep enough (if Why 3 is still a person's mistake, go deeper)
 - [ ] Every action item has an owner. No orphan actions.
 - [ ] "Got lucky" section is honest. If you didn't get lucky, say so.
-- [ ] TL;DR is actually a TL;DR (< 100 words)
+- [ ] TL;DR is actually a TL;DR (< 100 words) — because a TL;DR longer than that is a summary, not a TL;DR — executives won't read it
 
 ---
 
@@ -249,16 +263,7 @@ The goal: next engineer in same situation succeeds. Not: next engineer is scared
 
 ## Triggers Reference
 
-These phrases should load this skill:
-- `/postmortem`
-- `write a postmortem`
-- `incident review` / `post-incident`
-- `SEV1` / `SEV2` / `SEV3` — any severity label near "report" or "review"
-- `what broke and why`
-- `we had an outage`
-- `production incident`
-- `blameless review`
-- `help me document the incident`
+See the "When to Use" section above for the full list of trigger phrases.
 
 ---
 
@@ -285,6 +290,15 @@ postmortem/                    # gitignored, auto-created
 ```
 
 That's it. No extra config. No setup. Just: incident happens → run skill → file exists → tickets exist → done.
+
+---
+
+## Boundaries
+
+- Does not track action items after creation (defers to project management tools)
+- Does not replace incident response or on-call tooling
+- Does not handle legal, compliance, or regulatory reviews
+- Does not assign blame or evaluate individual performance
 
 ---
 

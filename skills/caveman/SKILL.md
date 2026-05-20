@@ -9,6 +9,7 @@ description: >
 domain: density
 composable: true
 yields_to: [process]
+scope: responses
 ---
 
 # Caveman Mode — Ultra-Terse Communication
@@ -170,6 +171,15 @@ Example — user confusion:
 
 **Advanced Techniques**: For extreme/symbolic modes, see `caveman/references/symbolic-compression.md` for full operator inventory, abbreviation systems, and compression patterns.
 
+## Self-Verification
+
+Before responding, verify:
+- No filler words survived (very, really, just, basically)
+- Shortest synonym used for every non-technical term
+- Code blocks are 100% untouched
+- Technical precision preserved (no vague paraphrasing)
+- Output matches requested intensity level
+
 ---
 
 ## Composability — Working With Other Skills
@@ -219,6 +229,3 @@ Caveman owns **density** — token count, verbosity, compression level of live r
 If density compression would destroy meaning from another skill's output:
 
 > `⚠️ Density conflict: compressing further would lose [voice markers / structural integrity / craft precision]. Holding at current level.`
-
-> [!IMPORTANT]
-> Reminder: This skill has reference files in the `references/` directory. If you need specific research on symbolic compression or expert communication patterns, you **MUST** call and read the relevant reference files.

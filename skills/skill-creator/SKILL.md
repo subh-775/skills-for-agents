@@ -162,9 +162,6 @@ Every skill must follow these 12 rules, backed by research from LangGPT, OpenAI,
 | 10 | **Mirror training data** | Skill quality = output quality signal |
 | 11 | **Outcome before process** | Define success criteria, not just steps |
 | 12 | **Self-verification** | Add verification for high-cost constraints |
-lity signal |
-| 11 | **Outcome before process** | Define success criteria, not just steps |
-| 12 | **Self-verification** | Add verification for high-cost constraints |
 
 ---
 
@@ -272,6 +269,15 @@ When the user brings an existing skill to improve:
 ## Skill Audit Checklist
 
 > See `references/evaluation.md` for the full audit checklist and evaluation framework.
+
+---
+
+## Boundaries
+
+- Does not write skill content without user input or approval
+- Does not deploy, test, or distribute skills
+- Does not modify PROTOCOL.md or SIP rules
+- Does not create skills that overlap with existing skill domains without explicit differentiation
 
 ---
 

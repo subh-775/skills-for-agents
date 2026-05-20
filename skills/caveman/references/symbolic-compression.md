@@ -466,33 +466,6 @@ User happy → UI green. User sad → UI red.
 
 ---
 
-## Future Research Directions
-
-### Z-tokens (Latent Code Compression)
-- 20x compression via autoencoding
-- Nearly lossless
-- Requires model fine-tuning
-- Not yet practical for general use
-
-### SKI Combinator Calculus
-- Combinatory logic for extreme compression
-- Theoretical interest only
-- Too abstract for practical use
-
-### Token Sugar
-- Replaces verbose code patterns with shorthand
-- 15.1% reduction
-- Reversible transformations
-- Best for code generation, not prose
-
-### HoliTom (Visual Token Compression)
-- Reduces visual tokens by 90%+
-- Token merging technique
-- Primarily for image/multimodal models
-- Not applicable to text-only
-
----
-
 **End of Reference**
 
 *This reference synthesizes findings from MetaGlyph (ArXiv 2601.07354), Agent Notation, APL/J/K languages, and token compression research to provide practical symbolic compression techniques for caveman mode.*

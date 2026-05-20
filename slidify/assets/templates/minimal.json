@@ -1,0 +1,26 @@
+{
+  "name": "minimal",
+  "extends": "default",
+  "palette": {
+    "primary":   "374151",
+    "accent":    "6366F1",
+    "text":      "1F2937",
+    "muted":     "9CA3AF",
+    "bg":        "F9FAFB",
+    "dark_bg":   "111827"
+  },
+  "watermark": { "enabled": false },
+  "footer": {
+    "enabled":  true,
+    "left":     "",
+    "center":   "",
+    "right":    "{n}",
+    "fontSize": 8,
+    "color":    "D1D5DB",
+    "y":        5.35,
+    "skip_slide_types": ["title", "closing"]
+  },
+  "title_slide":   { "bg": "bg" },
+  "section_slide": { "bg": "dark_bg" },
+  "closing_slide": { "bg": "dark_bg" }
+}

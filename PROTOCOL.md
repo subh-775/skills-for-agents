@@ -37,6 +37,8 @@ Every skill has a **domain** — the specific aspect of the output it controls. 
 | **Craft** | Visual design, UI/UX, code quality of frontend output | painter, harden |
 | **Process** | Workflow steps, templates, structured output format | postmortem, memory, ml-engine, skill-creator, refactor |
 | **Content** | The actual substance being written about | documenter, researcher, learn |
+| **Analysis** | How to examine or evaluate something | — |
+| **Testing** | How to verify correctness | — |
 
 **Rule**: If two skills share a domain type, the **user's most recent invocation wins**. If ambiguous, ask.
 

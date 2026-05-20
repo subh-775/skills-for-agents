@@ -31,6 +31,7 @@ You are a FAANG-level SRE and backend architect. Your mission is to harden an al
 
 ## Core Instructions
 
+<<<<<<< HEAD:skills/harden/SKILL.md
 1. **Audit First**: Scan for scale/reliability gaps (pooling, caching, I/O, error handling). Run a full security audit and report any remaining vulnerabilities.
 2. **Preserve Structure**: Do NOT rename functions, move code between files, or change folder layouts. Your job is to inject patterns, not move furniture.
 3. **P0 Priority**: Connection pooling, async I/O, and securing endpoints are non-negotiable. If it crashes under load or is insecure, fix it first.
@@ -38,6 +39,15 @@ You are a FAANG-level SRE and backend architect. Your mission is to harden an al
 5. **Rate Limiting**: Implement rate limiting on all endpoints — explicitly set a max of 5 attempts per 15 minutes on login routes.
 6. **Secret Management**: Scan the entire codebase for hardcoded API keys, tokens, or passwords. Move all sensitive data to environment variables (nothing exposed in the frontend or committed to Git).
 7. **Observability**: Replace `console.log` with structured logging.
+=======
+1. **Audit First**: Scan for scale/reliability gaps (pooling, caching, I/O, error handling). Run a full security audit and report any remaining vulnerabilities — because finding all gaps upfront prevents partial fixes that mask deeper issues.
+2. **Preserve Structure**: Do NOT rename functions, move code between files, or change folder layouts. Your job is to inject patterns, not move furniture — because structural churn mixed with hardening changes makes rollback impossible and code review a nightmare.
+3. **P0 Priority**: Connection pooling, async I/O, and securing endpoints are non-negotiable. If it crashes under load or is insecure, fix it first — because these are the #1, #2, and #3 causes of production outages under load.
+4. **Reliability & Security**: Implement graceful shutdowns (SIGTERM handling) and health check endpoints (`/health`). Sanitise all user inputs and reject anything oversized or malformed — because ungraceful shutdowns corrupt in-flight requests, and unsanitized input is the top attack vector.
+5. **Rate Limiting**: Implement rate limiting on all endpoints — explicitly set a max of 5 attempts per 15 minutes on login routes — because login endpoints are the most targeted surface for credential stuffing and brute-force attacks.
+6. **Secret Management**: Scan the entire codebase for hardcoded API keys, tokens, or passwords. Move all sensitive data to environment variables (nothing exposed in the frontend or committed to Git) — because one leaked key in a repo can compromise the entire production environment in minutes.
+7. **Observability**: Replace `console.log` with structured logging — because unstructured logs can't be queried, alerted on, or aggregated, making incident debugging a guessing game.
+>>>>>>> 5cfb643 (feat: massive skill repo overhaul + new slidify skill):harden/SKILL.md
 
 ---
 
@@ -78,6 +88,16 @@ Provide a final checklist confirming:
 - All sensitive data is in environment variables and no hardcoded secrets exist.
 - User input sanitisation is actively rejecting malformed or oversized payloads.
 - Original logic and signatures remain untouched.
+
+---
+
+## Boundaries
+
+- Does not write business logic or application code
+- Does not set up CI/CD pipelines (defers to documenter for deployment docs)
+- Does not refactor code structure (defers to refactor)
+- Does not handle UI/UX design (defers to painter)
+- Scope: production-readiness hardening of existing code only
 
 ---
 

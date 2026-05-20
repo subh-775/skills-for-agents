@@ -17,6 +17,8 @@ yields_to: [process, craft]
 
 Compress text-based files to reduce token count while preserving **all** meaning, technical accuracy, and structural intent. This is NOT summarization — every fact, instruction, code block, and technical term survives. Only waste dies.
 
+> Compression preserves accuracy — validated by Hakim et al. (2026), ArXiv 2604.00025. The caveman communication philosophy demonstrates 30-95% token reduction with zero accuracy loss on technical content.
+
 Default intensity: **standard**. Switch: `/compress [path] lite|standard|aggressive|extreme`.
 
 ---
@@ -381,6 +383,7 @@ For directories:
 
 ## BOUNDARIES
 
+- For live response compression (chat, Q&A), use the **caveman** skill. Compress handles files, documents, and static content only.
 - `/compress [path]` — compress at standard level
 - `/compress [path] lite` — light cleanup
 - `/compress [path] aggressive` — heavy compression
@@ -390,6 +393,16 @@ For directories:
 - `/compress [path] --output [new_path]` — write to different location
 - `stop compress` / `undo compress` — revert if backup exists
 - If user provides raw text instead of a path, compress inline and return result
+
+## Self-Verification
+
+After compression, verify:
+- All code blocks are byte-for-byte identical to source
+- All URLs unchanged and functional
+- All numbers, dates, and metrics preserved exactly
+- Meaning is unambiguous without the original text
+- No new information introduced
+- Compression ratio reported accurately
 
 ---
 

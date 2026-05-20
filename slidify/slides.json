@@ -1,0 +1,439 @@
+{
+  "meta": {
+    "title": "Beyond Evaluation: Techniques to Mitigate CSP and DTP",
+    "author": "Shaurya Sharthak",
+    "template": "csvtu-project",
+    "output": "Major_Project_Presentation.pptx",
+    "layout": "16x9"
+  },
+  "slides": [
+    {
+      "type": "blank",
+      "_template_override": { "footer": { "enabled": false }, "watermark": { "enabled": false } },
+      "shapes": [
+        {
+          "type": "rect",
+          "x": 0, "y": 0, "w": "100%", "h": "100%",
+          "fill": { "color": "1B3A5C" },
+          "line": { "color": "D4A843", "width": 2.5 }
+        },
+        {
+          "type": "rect",
+          "x": 0.25, "y": 0.15, "w": 9.5, "h": 5.3,
+          "fill": { "type": "none" },
+          "line": { "color": "D4A843", "width": 1.5 }
+        },
+        {
+          "type": "text",
+          "text": "Chhattisgarh Swami Vivekanand Technical University\nUniversity Teaching Department\nDepartment of Computer Science and Engineering",
+          "x": 0.5, "y": 0.3, "w": 9.0, "h": 1.0,
+          "fontSize": 14, "fontFace": "Calibri", "color": "FFFFFF",
+          "bold": true, "align": "center", "lineSpacingMultiple": 1.2
+        },
+        {
+          "type": "text",
+          "text": "Major Project Presentation",
+          "x": 0.5, "y": 1.5, "w": 9.0, "h": 0.4,
+          "fontSize": 18, "fontFace": "Calibri", "color": "D4A843",
+          "bold": true, "align": "center"
+        },
+        {
+          "type": "text",
+          "text": "On",
+          "x": 0.5, "y": 2.0, "w": 9.0, "h": 0.3,
+          "fontSize": 13, "fontFace": "Calibri", "color": "FFFFFF",
+          "align": "center"
+        },
+        {
+          "type": "text",
+          "text": "Beyond Evaluation: Techniques to Mitigate Code-Switching\nand Domain Transfer Penalties in Hindi/Hinglish CoT Reasoning",
+          "x": 0.5, "y": 2.35, "w": 9.0, "h": 0.75,
+          "fontSize": 16, "fontFace": "Calibri", "color": "FFFFFF",
+          "bold": true, "align": "center", "lineSpacingMultiple": 1.2
+        },
+        {
+          "type": "text",
+          "text": "Presented By",
+          "x": 0.5, "y": 3.25, "w": 9.0, "h": 0.25,
+          "fontSize": 11, "fontFace": "Calibri", "color": "D4A843",
+          "bold": true, "align": "center"
+        },
+        {
+          "type": "text",
+          "text": "Shaurya Sharthak (300012722059)  |  Daneshwar Prasad (300012722008)  |  Vishal Verma (300012722049)\nCSE-AI",
+          "x": 0.5, "y": 3.55, "w": 9.0, "h": 0.5,
+          "fontSize": 11, "fontFace": "Calibri", "color": "FFFFFF",
+          "align": "center", "lineSpacingMultiple": 1.15
+        },
+        {
+          "type": "text",
+          "text": "Guided By\nMrs. Basanti Minj\nAssociate Professor, Department of CSE",
+          "x": 0.5, "y": 4.3, "w": 9.0, "h": 0.7,
+          "fontSize": 11, "fontFace": "Calibri", "color": "FFFFFF",
+          "align": "center", "lineSpacingMultiple": 1.15
+        },
+        {
+          "type": "text",
+          "text": "May 2026",
+          "x": 0.5, "y": 5.05, "w": 9.0, "h": 0.25,
+          "fontSize": 10, "fontFace": "Calibri", "color": "D4A843",
+          "align": "center"
+        }
+      ]
+    },
+    {
+      "type": "content",
+      "title": "Contents",
+      "layout": "two-column",
+      "left": {
+        "type": "bullets",
+        "items": [
+          "Introduction & Motivation",
+          "Research Objectives",
+          "Problem Statement",
+          "Baseline Findings (7th Sem)",
+          "Literature Survey",
+          "Research Methodology"
+        ]
+      },
+      "right": {
+        "type": "bullets",
+        "items": [
+          "FHA-CoT Dataset",
+          "Six Mitigation Techniques",
+          "Results & Discussion",
+          "Conclusion",
+          "References"
+        ]
+      }
+    },
+    {
+      "type": "content",
+      "title": "Introduction & Motivation",
+      "layout": "two-column",
+      "left": {
+        "type": "bullets",
+        "items": [
+          "LLM reasoning research is overwhelmingly English-centric",
+          "Hinglish is the de facto language of digital India (1.4B+ people)",
+          "Chain-of-Thought (CoT) reasoning enables transparent, step-by-step problem solving",
+          "Critical gap: no robust CoT systems for Hindi/Hinglish"
+        ]
+      },
+      "right": {
+        "type": "image",
+        "path": "C:/Users/shaur/OneDrive/Documents/Major Project 8th sem/src/images/three_domains.png"
+      }
+    },
+    {
+      "type": "content",
+      "title": "Research Objectives",
+      "layout": "bullets",
+      "items": [
+        "Develop 6 concrete mitigation techniques for Code-Switching Penalty (CSP) and Domain Transfer Penalty (DTP)",
+        "Expand FHA-CoT corpus from 25K to 50K samples via controlled synthetic augmentation",
+        "Techniques: Embedding LoRA, Curriculum Learning, Data Augmentation, Cross-Lingual Alignment, Domain Adapters, DPO Training",
+        "Build a combined pipeline demonstrating measurable penalty reduction with preserved CoT faithfulness",
+        "Provide a reproducible framework for robust multilingual reasoning in the Indian language sphere"
+      ]
+    },
+    {
+      "type": "content",
+      "title": "Problem Statement",
+      "layout": "two-column",
+      "left": {
+        "type": "bullets",
+        "items": [
+          "Code-Switching Penalty: 10.2% avg FAA drop (Hindi to Hinglish)",
+          "Domain Transfer Penalty: 10.35% FAA drop (General to Spiritual)",
+          "Compounding effect: worst case 20.3% total drop",
+          "12.4% Correct-Unfaithful rate in hardest split"
+        ]
+      },
+      "right": {
+        "type": "image",
+        "path": "C:/Users/shaur/OneDrive/Documents/Major Project 8th sem/src/images/cot_mechanism.png"
+      }
+    },
+    {
+      "type": "content",
+      "title": "7th Semester Baseline Findings",
+      "layout": "stats",
+      "stats": [
+        { "value": "10.2%", "label": "Code-Switching Penalty" },
+        { "value": "10.35%", "label": "Domain Transfer Penalty" },
+        { "value": "64.4%", "label": "Avg Hinglish FAA" },
+        { "value": "12.4%", "label": "Correct-Unfaithful Rate" }
+      ]
+    },
+    {
+      "type": "content",
+      "title": "Literature Survey",
+      "layout": "cards",
+      "cards": [
+        { "title": "CoT Reasoning", "body": "Wei et al. (2022): Step-by-step reasoning via prompting. Few-Shot, Zero-Shot, and Instruction-Tuned variants." },
+        { "title": "LLaMA Models", "body": "Touvron et al. (2023): Open-weight foundation models. Llama-3-8B as our base for fine-tuning." },
+        { "title": "PEFT / QLoRA", "body": "Dettmers et al. (2023): Quantized LoRA enabling fine-tuning on consumer GPUs (RTX 4090, 24GB)." },
+        { "title": "Indic NLP Gaps", "body": "Ahuja et al. (2023): Systematic underperformance on Indian languages. Code-mixing remains unsolved." }
+      ]
+    },
+    {
+      "type": "content",
+      "title": "Research Methodology",
+      "layout": "timeline",
+      "steps": [
+        { "label": "Phase 1", "text": "Literature review & data strategy" },
+        { "label": "Phase 2", "text": "FHA-CoT expansion (25K to 50K)" },
+        { "label": "Phase 3", "text": "Design & implement 6 techniques" },
+        { "label": "Phase 4", "text": "Combined pipeline & evaluation" },
+        { "label": "Phase 5", "text": "Statistical analysis & ablation" }
+      ]
+    },
+    {
+      "type": "content",
+      "title": "FHA-CoT Dataset",
+      "layout": "image-right",
+      "items": [
+        "Foundational Hindi/Hinglish Chain-of-Thought Corpus",
+        "25K samples expanded to 50K via controlled augmentation",
+        "3 cognitive domains: General, Medical, Spiritual (Gita)",
+        "2 linguistic variants: Hindi (Devanagari) + Hinglish (Roman)",
+        "Instruction-Rationale-Answer triplets with faithfulness scoring"
+      ],
+      "image": {
+        "path": "C:/Users/shaur/OneDrive/Documents/Major Project 8th sem/src/images/dataset_composition.png"
+      }
+    },
+    {
+      "type": "content",
+      "title": "Six Mitigation Techniques",
+      "layout": "cards",
+      "cards": [
+        { "title": "1. Embedding LoRA", "body": "Dual-adapter targeting tokenization bottleneck for code-mixed input" },
+        { "title": "2. Curriculum Learning", "body": "Progressive domain adaptation: easy to hard" },
+        { "title": "3. Data Augmentation", "body": "Controlled code-mixing expanding 25K to 50K" },
+        { "title": "4. Cross-Lingual Alignment", "body": "Contrastive loss mapping Hindi/Hinglish closer" },
+        { "title": "5. Domain Adapters", "body": "Specialized pathways per cognitive domain" },
+        { "title": "6. DPO Training", "body": "Faithfulness-aware reasoning optimization" }
+      ]
+    },
+    {
+      "type": "content",
+      "title": "Technique 1: Embedding-Level LoRA Adapters",
+      "layout": "image-right",
+      "items": [
+        "Dual-adapter design: Embedding LoRA + Attention LoRA",
+        "Targets the tokenization bottleneck: Hindi = 3.2 tok/word vs English = 1.3",
+        "Rank 64: best trade-off (12.6M trainable params, 0.16% of model)",
+        "CSP reduction: avg -2.0% across all domains",
+        "Largest gain in Spiritual Hinglish (+3.5% FAA)"
+      ],
+      "image": {
+        "path": "C:/Users/shaur/OneDrive/Documents/Major Project 8th sem/src/images/embedding_lora.png"
+      }
+    },
+    {
+      "type": "content",
+      "title": "Technique 2: Curriculum Learning",
+      "layout": "image-right",
+      "items": [
+        "3-stage progressive training: General then Medical then Spiritual",
+        "Reduces catastrophic forgetting by establishing stable representations",
+        "Spiritual DTP: 10.35% to 7.6% (-26.1%)",
+        "Difficulty hierarchy preserved but gaps narrowed",
+        "Best for Domain Transfer Penalty reduction"
+      ],
+      "image": {
+        "path": "C:/Users/shaur/OneDrive/Documents/Major Project 8th sem/src/images/curriculum_pipeline.png"
+      }
+    },
+    {
+      "type": "content",
+      "title": "Technique 3: Synthetic Data Augmentation",
+      "layout": "image-right",
+      "items": [
+        "Controlled code-mixing algorithm for Hinglish generation",
+        "CMI target range: 0.3-0.5 (natural code-switching)",
+        "Hinglish training data doubled: 12.5K to 25K samples",
+        "Quality filtering via perplexity thresholds",
+        "Consistent +0.9-3.9% FAA improvement across all splits"
+      ],
+      "image": {
+        "path": "C:/Users/shaur/OneDrive/Documents/Major Project 8th sem/src/images/augmentation_pipeline.png"
+      }
+    },
+    {
+      "type": "content",
+      "title": "Technique 4: Cross-Lingual Alignment Loss",
+      "layout": "image-right",
+      "items": [
+        "Contrastive loss mapping Hindi and Hinglish representations closer",
+        "Most effective individual technique for CSP reduction (-2.1%)",
+        "Minimal impact on Hindi-only splits (+0.6%)",
+        "Reduces representation gap in embedding space",
+        "Mathematical framework for cross-lingual transfer"
+      ],
+      "image": {
+        "path": "C:/Users/shaur/OneDrive/Documents/Major Project 8th sem/src/images/alignment_loss.png"
+      }
+    },
+    {
+      "type": "content",
+      "title": "Technique 5: Domain-Specific Adapters",
+      "layout": "image-right",
+      "items": [
+        "Per-domain LoRA adapters with learned routing mechanism",
+        "Most effective for DTP: Spiritual 10.35% to 6.3% (-39.1%)",
+        "Specialized reasoning pathways for each cognitive domain",
+        "Router network selects optimal adapter at inference",
+        "5% latency overhead at inference time"
+      ],
+      "image": {
+        "path": "C:/Users/shaur/OneDrive/Documents/Major Project 8th sem/src/images/domain_adapters.png"
+      }
+    },
+    {
+      "type": "content",
+      "title": "Technique 6: Faithfulness-Aware DPO Training",
+      "layout": "image-right",
+      "items": [
+        "Direct Preference Optimization for reasoning quality",
+        "Trains model to prefer logically sound over merely correct",
+        "Correct-Unfaithful rate: 12.4% to 7.8% (-37.1%)",
+        "Modest FAA gain (+0.3%) but major qualitative improvement",
+        "Only technique directly targeting the 'illusion of competence'"
+      ],
+      "image": {
+        "path": "C:/Users/shaur/OneDrive/Documents/Major Project 8th sem/src/images/dpo_pipeline.png"
+      }
+    },
+    {
+      "type": "content",
+      "title": "Full Mitigation Pipeline",
+      "layout": "image-full",
+      "path": "C:/Users/shaur/OneDrive/Documents/Major Project 8th sem/src/images/full_pipeline.png",
+      "caption": "Combined 6-technique mitigation pipeline: Embedding LoRA, Curriculum Learning, Data Augmentation, Cross-Lingual Alignment, Domain Adapters, and DPO Training applied sequentially"
+    },
+    {
+      "type": "content",
+      "title": "Results: Individual Technique Impact",
+      "layout": "chart",
+      "chart": {
+        "kind": "bar",
+        "labels": ["Emb. LoRA", "Curriculum", "Augment", "Align", "Dom.Adapt", "DPO", "Combined"],
+        "series": [
+          { "name": "CSP Reduction (%)", "values": [2.0, 1.4, 1.1, 2.1, 1.3, 0.8, 5.4] },
+          { "name": "DTP Reduction (%)", "values": [1.2, 2.75, 1.5, 1.8, 4.05, 0.9, 5.25] }
+        ],
+        "colors": ["1B3A5C", "D4A843"],
+        "yAxisTitle": "Penalty Reduction (%)"
+      }
+    },
+    {
+      "type": "content",
+      "title": "Results: Combined Pipeline Performance",
+      "layout": "stats",
+      "stats": [
+        { "value": "52.9%", "label": "CSP Reduction (10.2% to 4.8%)" },
+        { "value": "50.7%", "label": "DTP Reduction (10.35% to 5.1%)" },
+        { "value": "76.0%", "label": "Final Avg Hinglish FAA" },
+        { "value": "66.1%", "label": "Correct-Unfaithful Reduction" }
+      ]
+    },
+    {
+      "type": "content",
+      "title": "Results: Faithfulness Improvement",
+      "layout": "image-left",
+      "items": [
+        "CoT Faithfulness: 3.5 to 4.3 (5-point scale)",
+        "Correct-Unfaithful rate: 12.4% to 4.2%",
+        "DPO most effective for faithfulness",
+        "Domain Adapters most effective for DTP",
+        "Cross-Lingual Alignment most effective for CSP"
+      ],
+      "image": {
+        "path": "C:/Users/shaur/OneDrive/Documents/Major Project 8th sem/src/images/faithfulness_distribution.png"
+      }
+    },
+    {
+      "type": "content",
+      "title": "Conclusion",
+      "layout": "bullets",
+      "items": [
+        "CSP and DTP penalties identified in 7th semester are not insurmountable",
+        "Combined pipeline: 52.9% CSP reduction, 50.7% DTP reduction",
+        "Best individual: Alignment (CSP), Domain Adapters (DTP), DPO (Faithfulness)",
+        "FHA-CoT dataset expanded to 50K with controlled augmentation",
+        "Reproducible framework for robust multilingual reasoning",
+        "Future: Other Indic languages, multi-modal reasoning, real-time adaptive models"
+      ]
+    },
+    {
+      "type": "content",
+      "title": "References",
+      "layout": "bullets",
+      "items": [
+        "[1] J. Wei et al., Chain-of-Thought Prompting Elicits Reasoning in LLMs, NeurIPS, 2022",
+        "[2] H. Touvron et al., LLaMA: Open and Efficient Foundation LLMs, arXiv, 2023",
+        "[3] T. Dettmers et al., QLoRA: Efficient Finetuning of Quantized LLMs, NeurIPS, 2023",
+        "[4] K. Cobbe et al., Training Verifiers to Solve Math Word Problems, arXiv, 2021",
+        "[5] K. Ahuja et al., IndicNLP Suite for Indian Languages, ACL, 2023",
+        "[6] R. Rafailov et al., Direct Preference Optimization, NeurIPS, 2023",
+        "[7] FHA-CoT Dataset: huggingface.co/fhai50032/datasets"
+      ]
+    },
+    {
+      "type": "blank",
+      "_template_override": { "footer": { "enabled": false }, "watermark": { "enabled": false } },
+      "shapes": [
+        {
+          "type": "rect",
+          "x": 0, "y": 0, "w": "100%", "h": "100%",
+          "fill": { "color": "1B3A5C" },
+          "line": { "color": "D4A843", "width": 2.5 }
+        },
+        {
+          "type": "rect",
+          "x": 0.25, "y": 0.15, "w": 9.5, "h": 5.3,
+          "fill": { "type": "none" },
+          "line": { "color": "D4A843", "width": 1.5 }
+        },
+        {
+          "type": "text",
+          "text": "Thank You",
+          "x": 0.5, "y": 1.5, "w": 9.0, "h": 1.0,
+          "fontSize": 44, "fontFace": "Calibri", "color": "FFFFFF",
+          "bold": true, "align": "center"
+        },
+        {
+          "type": "text",
+          "text": "shauryajnvkkr@gmail.com",
+          "x": 0.5, "y": 2.7, "w": 9.0, "h": 0.4,
+          "fontSize": 14, "fontFace": "Calibri", "color": "D4A843",
+          "align": "center"
+        },
+        {
+          "type": "text",
+          "text": "Dataset: huggingface.co/fhai50032/datasets",
+          "x": 0.5, "y": 3.2, "w": 9.0, "h": 0.4,
+          "fontSize": 12, "fontFace": "Calibri", "color": "FFFFFF",
+          "align": "center"
+        },
+        {
+          "type": "text",
+          "text": "20 May 2026",
+          "x": 0.5, "y": 4.5, "w": 9.0, "h": 0.3,
+          "fontSize": 11, "fontFace": "Calibri", "color": "9CA3AF",
+          "align": "center"
+        },
+        {
+          "type": "text",
+          "text": "Dept. of Computer Science & Engineering\nUTD, CSVTU Bhilai",
+          "x": 0.5, "y": 4.85, "w": 9.0, "h": 0.5,
+          "fontSize": 10, "fontFace": "Calibri", "color": "FFFFFF",
+          "align": "center", "lineSpacingMultiple": 1.15
+        }
+      ]
+    }
+  ]
+}
