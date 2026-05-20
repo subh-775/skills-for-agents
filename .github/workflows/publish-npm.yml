@@ -5,10 +5,12 @@ on:
     branches: [main]
     paths:
       - 'skills/**'
-      - 'src/**'
-      - 'bin/**'
       - 'package.json'
+      - 'package-lock.json'
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   publish:
@@ -30,11 +32,8 @@ jobs:
         run: |
           CURRENT=$(node -p "require('./package.json').version")
           echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
-
-          # Check if this version is already published
           PUBLISHED=$(npm view skills-for-agents version 2>/dev/null || echo "0.0.0")
           echo "published=$PUBLISHED" >> "$GITHUB_OUTPUT"
-
           if [ "$CURRENT" = "$PUBLISHED" ]; then
             echo "needs_bump=true" >> "$GITHUB_OUTPUT"
           else
