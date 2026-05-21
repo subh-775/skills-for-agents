@@ -291,7 +291,7 @@ async function install({
   const skillNames = getSkillDirs(skillsRoot);
   const toInstall = only || skillNames;
 
-  console.log(`\n  skills-for-agents v1.0.2\n`);
+  console.log(`\n  skills-for-agents v1.0.3\n`);
   console.log(`  Skills: ${toInstall.length} found\n`);
 
   // Determine which tools to install to
