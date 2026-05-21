@@ -3,11 +3,13 @@ name: slidify
 description: >
   End-to-end PowerPoint presentation generator. Use whenever the user wants to create,
   edit, or export a .pptx file, convert to PDF, add watermarks/logos/footers, apply
-  brand templates, or build a slide deck from any content. Trigger on: "make a presentation",
+  brand templates, build a slide deck from any content, generate charts/diagrams,
+  fetch stock images, or add animations/transitions. Trigger on: "make a presentation",
   "create slides", "generate pptx", "make a deck", "export to pdf", "add watermark",
-  "college logo on slides", "apply template", "slide deck for report", "/slidify",
-  or any request involving .pptx files. Always use this skill — never generate
-  pptxgenjs/python-pptx code from memory without it.
+  "college logo on slides", "apply template", "slide deck for report", "add chart",
+  "generate diagram", "add image", "add animations", "/slidify", or any request
+  involving .pptx files. Always use this skill — never generate pptxgenjs/python-pptx
+  code from memory without it.
 domain: process
 composable: true
 yields_to: [craft]
@@ -23,12 +25,38 @@ This separation makes the pipeline AI-friendly: editing means editing JSON, not 
 
 ---
 
+## Core Philosophy: Images Over Text
+
+**1 image > 2 slides of text.** Visuals are processed 60,000x faster than text. Every slide with more than 4 bullet points is a candidate for an image replacement.
+
+Before writing any slide, ask: **"Can this be a chart, diagram, or image instead of text?"**
+
+| If the content is... | Replace with... |
+|---------------------|----------------|
+| 5+ bullet points with data | Bar chart or comparison visual |
+| A process with 3+ steps | Flowchart diagram |
+| A timeline of events | Timeline visual |
+| Statistics/numbers | Stat callout cards with big numbers |
+| Before/after comparison | Side-by-side visual |
+| Overlapping concepts | Venn diagram |
+| Feature list | Icon grid |
+| Trend over time | Line chart |
+| Part-of-whole data | Pie/donut chart |
+| Hero/intro slide | Searched stock image |
+
+Use `scripts/gen_images.py` to generate charts from data. Use `scripts/fetch_images.py`
+to find stock images from the web. See `references/images.md` for the full catalog.
+
+---
+
 ## When to Use
 
 - User asks to create, edit, or export a presentation
 - User mentions slides, deck, pptx, PowerPoint, or PDF export
 - User wants watermarks, logos, brand colors, or footers on slides
 - User provides content (paper, report, outline) and wants it as slides
+- User wants charts, diagrams, or data visualizations in slides
+- User wants stock images or illustrations fetched from the web
 - User says "/slidify"
 
 ---
@@ -121,6 +149,54 @@ node scripts/gen_pptx.js slides.json
 
 The generator reads `slides.json` + the template config and produces a `.pptx`.
 
+### Step 3b — Generate Images (Optional but Recommended)
+
+If the slide spec has an `"images"` block, generate charts and fetch stock images:
+
+```bash
+# Generate charts/diagrams from data
+python scripts/gen_images.py images-config.json assets/generated/
+
+# Fetch stock images from the web
+python scripts/fetch_images.py fetch-config.json assets/fetched/
+```
+
+Then reference the generated images in the slide spec:
+
+```json
+{
+  "type": "content",
+  "title": "Results",
+  "layout": "image-right",
+  "image": { "path": "assets/generated/perf_chart.png" },
+  "notes": "The chart shows our 4x improvement..."
+}
+```
+
+**When to generate images:**
+
+| Slide Content | Generate | Type |
+|--------------|----------|------|
+| Data comparisons | Yes | `bar` or `grouped_bar` |
+| Statistics | Yes | `stat_callout` |
+| Process/workflow | Yes | `flowchart` |
+| Timeline | Yes | `timeline` |
+| Trends | Yes | `line` |
+| Hero/intro | Fetch | Stock image via `fetch_images.py` |
+
+See `references/images.md` for all chart types and options.
+
+### Step 3c — Add Animations (Optional)
+
+If the user wants animations or transitions, add an `"animations"` block to `slides.json`
+(see `references/slide-spec.md` for full schema). Then post-process:
+
+```bash
+node scripts/add_animations.js output.pptx animations.json output-animated.pptx
+```
+
+See `references/animations.md` for the full effect catalog.
+
 ### Step 4 — Export (Optional)
 
 ```bash
@@ -186,6 +262,8 @@ Content layouts: `bullets`, `two-column`, `image-right`, `image-left`, `cards`, 
 | Slide spec format | `references/slide-spec.md` |
 | Template system | `references/templates.md` |
 | pptxgenjs API cheatsheet | `references/pptxgenjs-cheatsheet.md` |
+| Images & charts | `references/images.md` |
+| Animations & transitions | `references/animations.md` |
 | Export options | `references/export.md` |
 | Ready-made templates | `assets/templates/*.json` |
 
