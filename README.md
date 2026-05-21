@@ -46,6 +46,12 @@ npx skills-for-agents install --tool cursor
 npx skills-for-agents install --tool windsurf
 npx skills-for-agents install --tool codex
 npx skills-for-agents install --tool antigravity
+npx skills-for-agents install --tool kiro
+npx skills-for-agents install --tool zed --project
+npx skills-for-agents install --tool cline --project
+npx skills-for-agents install --tool aider --project
+npx skills-for-agents install --tool copilot --project
+npx skills-for-agents install --tool continue
 
 # Install to current project directory
 npx skills-for-agents install --project

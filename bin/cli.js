@@ -64,7 +64,8 @@ function showHelp() {
 
   INSTALL OPTIONS:
     --tool <name>    Target a specific tool (can repeat)
-                     Supported: antigravity, claude, codex, cursor, windsurf
+                     Supported: antigravity, claude, codex, cursor, windsurf,
+                     kiro, zed, cline, aider, copilot, continue
     --all            Install to every supported tool
     --project        Install to current project directory
     --global         Install to global config directories
@@ -75,6 +76,8 @@ function showHelp() {
     npx skills-for-agents install
     npx skills-for-agents install --tool claude
     npx skills-for-agents install --tool cursor --tool windsurf --project
+    npx skills-for-agents install --tool kiro --global
+    npx skills-for-agents install --tool aider --project
     npx skills-for-agents install --only caveman,blogger,slidify
     npx skills-for-agents list
   `);

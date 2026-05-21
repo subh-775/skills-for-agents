@@ -7,3 +7,4 @@ docs-site/.vitepress/dist/
 skills/memory/data/
 .cursor/
 agents/
+docs-site/.vitepress/cache/

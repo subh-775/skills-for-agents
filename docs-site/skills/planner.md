@@ -1,103 +1,75 @@
+<div class="domain-header">
+  <span class="skill-badge process">Process</span>
+  <span style="color: var(--ink-muted); font-size: var(--text-sm);">Composable &middot; Yields to: Voice, Density, Craft</span>
+</div>
+
 # Planner
 
-Project blueprint generator for vibe coding. Produces PRDs, design docs, architecture flows, task breakdowns, and project constitutions before any code is written.
-
-## Domain
-
-**Process** — controls the workflow for generating project specifications and planning documents. The planning skeleton is sacred.
+Project plans with PRDs, design docs, architecture flows, and task breakdowns.
 
 ## When to Use
 
-- `/plan [doc]` or "plan this project", "create a PRD", "write a design doc"
-- "architecture for", "break this into tasks", "spec this out", "project blueprint"
-- User describes an app idea and needs structure before implementation
-- Preparing a codebase for AI-agent-assisted development
+- User says "create a PRD", "design the architecture", "plan this project"
+- User invokes `/plan`
+- Breaking down complex tasks
 
-## Commands
-
-| Command | Output |
-|---------|--------|
-| `/plan` | Full intake + all 8 docs |
-| `/plan prd` | PRD.md only — vision, personas, features, metrics |
-| `/plan design` | DESIGN.md only — technical decisions and rationale |
-| `/plan arch` | ARCH.md only — diagrams, components, deployment |
-| `/plan impl` | IMPL-PLAN.md only — phased vertical slice plan |
-| `/plan agents` | AGENTS.md only — AI coding agent config |
-| `/plan api` | API.md only — endpoint contracts |
-| `/plan db` | DB.md only — schema + ERD |
-| `/plan flow` | FLOW.md only — user journeys + diagrams |
-| `/plan stack` | Stack recommendation only (no docs) |
-| `/plan review` | Review existing plan for gaps |
-| `/plan update [doc]` | Revise a specific doc given new context |
-
-## The Planning Pipeline
-
-Documents generate in strict order — each phase builds on the previous:
+## Triggers
 
 ```
-PRD (What) -> DESIGN (How) -> ARCH (Map) -> IMPL-PLAN (Steps) -> AGENTS (Rules) -> API (Spec) -> DB (Data) -> FLOW (UX)
+/plan [optional: prd|design|architecture|tasks]
+"create a PRD", "design the architecture", "plan this project"
 ```
 
-**Output structure:**
+## Examples
+
+<div class="example-box">
+<div class="example-label">Example 1</div>
+<div class="example-title">Generate a PRD</div>
+<div class="example-desc">Create a product requirements document for a new feature.</div>
+
 ```
-project-root/
-+-- AGENTS.md              # Project root (AI agent config)
-+-- docs/
-    +-- PRD.md             # Product requirements: what & why
-    +-- DESIGN.md          # Technical design: decisions & rationale
-    +-- ARCH.md            # Architecture: diagrams & components
-    +-- IMPL-PLAN.md       # Build plan: phased vertical slices
-    +-- API.md             # Endpoint contracts
-    +-- DB.md              # Schema + ERD
-    +-- FLOW.md            # User journeys & screen inventory
+/plan prd Add real-time collaboration to our code editor
+
+The agent generates:
+- Problem statement and user stories
+- Functional requirements (CRDT-based sync, presence
+  indicators, conflict resolution)
+- Non-functional requirements (latency < 100ms, 100
+  concurrent editors)
+- Success metrics, risks, open questions
+- Timeline with milestones
 ```
+</div>
 
-## Key Concepts
+<div class="example-box">
+<div class="example-label">Example 2</div>
+<div class="example-title">Architecture design doc</div>
+<div class="example-desc">Design the system architecture for a new service.</div>
 
-**Entry Protocol**: Intake Interview (9 questions) -> Stack Recommendation (if needed) -> Document Generation. Extract answers from context before asking.
-
-**Stack Recommendations**: SaaS = Next.js + Supabase, Mobile = Expo + Supabase + Clerk, AI/ML = FastAPI + Postgres, Dashboard = Next.js + Drizzle + Neon, API = Hono/FastAPI + Postgres, Realtime = Next.js + Supabase Realtime.
-
-**Task Sizing**: XS (<1hr), S (2-4hr), M (1-2 days), L (3-5 days), XL (1+ week). Each task touches 1-3 files max, under 2 hours, with testable acceptance criteria.
-
-**Plan Depth**: Quick prototype (5-10 tasks, 50-line AGENTS.md), Side project (15-30 tasks, 100 lines), Production app (30-60+ tasks, 150 lines).
-
-**Living Documents**: Docs are not write-once. After each coding phase, run `/plan update [doc]` to sync with reality.
-
-## Composability
-
-```yaml
-domain: process
-composable: true
-yields_to: []
 ```
+/plan architecture Design a distributed cache layer
 
-Planner owns **process** — the planning skeleton. Nobody overrides the document pipeline order or required sections.
+The agent produces:
+- Component diagram (cache nodes, client SDK, invalidation)
+- Data flow (write-through, read-through patterns)
+- API contracts (get, set, delete, invalidate)
+- Trade-offs: consistency vs availability
+- Alternatives considered (Redis, Memcached, custom)
+- Decision rationale with ADR format
+```
+</div>
 
-### When Planner Leads
+<div class="example-box">
+<div class="example-label">Example 3</div>
+<div class="example-title">Research then plan</div>
+<div class="example-desc">Research best practices before creating the plan.</div>
 
-- Any greenfield project planning
-- Feature design before implementation
-- Generating context docs for AI coding agents
-- PRD/spec creation from scratch
+```
+/researcher + /plan
 
-### When Planner Defers
-
-| Other Skill's Domain | What Planner Does |
-|---------------------|-------------------|
-| **Voice** | Planner structures all documents. Voice adjusts tone within sections. |
-| **Craft** | Planner defines UI requirements in PRD. Painter fills design-specific details. |
-| **Content** | If planning reveals unknown tech, researcher gathers context. Planner uses findings in DESIGN.md + ARCH.md. |
-| **Density** | Planner generates full docs. Density compresses for context window efficiency. |
-
-## Related Skills
-
-- [Refactor](./refactor) — downstream: refactoring feeds into planner's IMPL-PLAN.md
-- [Researcher](./researcher) — upstream: research findings feed into stack decisions
-- [Painter](./painter) — UI requirements from PRD, painter fills design details
-- [Skill Creator](./skill-creator) — AGENTS.md follows similar conventions
-
-## Resources
-
-- [Full SKILL.md](https://github.com/IsNoobgrammer/skills-for-agents/blob/main/skills/planner/SKILL.md) — complete planning guide
-- [SIP Framework](/guide/sip-framework) — how planner composes
+Researcher surveys current best practices for real-time
+collaboration (CRDTs, OT, hybrid approaches). Planner
+uses findings to create an informed architecture doc
+with proper trade-off analysis.
+```
+</div>
