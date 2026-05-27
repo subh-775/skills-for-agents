@@ -71,6 +71,45 @@ proper trade-off analysis.
 ```
 </div>
 
+## Output Format
+
+All research reports are saved as **visual HTML dashboards** — not plain text.
+
+### Folder Structure
+
+```
+~/researcher/<topic_slug>_<DD>_<MONTH>_<YYYY>/
+├── index.html          # Main report (entry point)
+├── sources.html        # Full source list + methodology
+├── deep-dive.html      # (optional) Extended analysis
+├── comparison.html     # (optional) Feature matrices
+├── assets/
+│   ├── style.css       # Dark-theme stylesheet
+│   └── charts.js       # Chart.js visualizations
+└── data/
+    └── findings.json   # Machine-readable backup
+```
+
+### Report Types
+
+| Goal | Generated Files | Visual Elements |
+|------|----------------|-----------------|
+| Context Feed | `index.html` only | Stat cards, link grid, gotcha callouts |
+| Overview | `index.html` + `sources.html` | Feature cards, ecosystem diagram |
+| Deep Dive | `index.html` + `deep-dive.html` + `sources.html` | Benchmark charts, architecture diagrams |
+| Comparison | `index.html` + `comparison.html` + `sources.html` | Feature matrix, radar charts, recommendation cards |
+| Hypothesis Test | `index.html` + `sources.html` | Evidence badges, confidence meter |
+| Diagnostic | `index.html` only | Symptom→cause flowchart, solution cards |
+
+### Visual Design
+
+- **Dark theme** (#0d1117 background, light text)
+- **Source type badges** — blue (official), green (community), red (Chinese), purple (academic), yellow (blogs), orange (video)
+- **Charts** — source distribution (doughnut), benchmarks (bar), feature comparison (radar)
+- **Stat cards** — sources consulted, source types, confidence, freshness score
+- **Collapsible sections** for extended analysis and methodology
+- **Self-contained** — Chart.js (CDN) is the only external dependency
+
 ## Source Evaluation
 
 Evaluates sources on:

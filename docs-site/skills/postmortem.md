@@ -75,11 +75,34 @@ impact, and design system gaps that enabled the bug.
 
 ## Report Structure
 
-| Section | Content |
-|---------|---------|
-| **Summary** | One-paragraph overview |
-| **Timeline** | Chronological event log |
-| **Impact** | Users affected, duration, severity |
-| **Root Cause** | Technical root cause with 5 Whys |
-| **Action Items** | Next steps with owners and deadlines |
-| **Lessons Learned** | What we learned |
+All postmortem reports are saved as **visual HTML dashboards** — not plain text.
+
+### Folder Structure
+
+```
+postmortem/YYYY-MM-DD-<slug>/
+├── index.html          # Incident dashboard (entry point)
+├── timeline.html       # Detailed timeline + charts
+├── root-cause.html     # 5 Whys deep dive + system diagrams
+├── action-items.html   # Action item tracker
+├── assets/
+│   ├── style.css       # Dark-theme stylesheet
+│   └── charts.js       # Chart.js visualizations
+└── data/
+    └── incident.json   # Machine-readable backup
+```
+
+### Visual Design
+
+- **Dark theme** (#0d1117 background, light text, severity accents)
+- **Severity badges** — red (SEV1), orange (SEV2), yellow (SEV3), blue (SEV4)
+- **Impact stat cards** — severity, duration, users affected, revenue impact, TTD, TTR
+- **Visual timeline** — vertical timeline with colored event markers (not a boring table)
+- **5 Whys cascade** — cascading card chain with deepening colors (not a table)
+- **System diagram** — CSS/SVG showing affected flow with failure point highlighted
+- **Action item cards** — priority badges, owner, due date, status
+- **Self-contained** — Chart.js (CDN) is the only external dependency
+
+### index.html Dashboard
+
+Opens with severity badge and impact stat cards, a visual timeline, system diagram, root cause cascade, and top action items. Links to supporting pages (timeline, root-cause, action-items).

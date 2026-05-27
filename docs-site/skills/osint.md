@@ -93,6 +93,40 @@ Takes minimal input (email, phone, name, username, company, IP, domain) and prod
 
 Structured JSON output with identity, social media, breaches, infrastructure, documents, dark web findings, and confidence scoring.
 
+## Output Format
+
+All OSINT reports are saved as **visual HTML dashboards** — not plain text.
+
+### Folder Structure
+
+```
+~/osint/<tag>_<DD>_<MONTH>_<YYYY>/
+├── index.html          # Executive dashboard (entry point)
+├── identity.html       # Identity & social media profiles
+├── infrastructure.html # Network, domains, tech stack
+├── breaches.html       # Breach/leak data + dark web findings
+├── sources.html        # Full source list + methodology
+├── assets/
+│   ├── style.css       # Dark-theme stylesheet
+│   └── charts.js       # Chart.js visualizations
+└── data/
+    └── findings.json   # Machine-readable backup
+```
+
+### Visual Design
+
+- **Dark theme** (#0d1117 background, light text, accent colors)
+- **Stat cards** — confidence level, platforms found, breach count, risk score
+- **Charts** — breach timeline (bar), platform presence (doughnut), risk radar
+- **Color-coded badges** — green (high confidence), yellow (medium), red (low)
+- **Collapsible sections** for verbose data (raw breaches, full source list)
+- **Responsive** — works on desktop and mobile
+- **Self-contained** — Chart.js (CDN) is the only external dependency
+
+### index.html Dashboard
+
+The main report opens with impact stat cards, a platform presence grid, breach timeline chart, risk assessment radar, and key findings cards. Links to supporting pages (identity, infrastructure, breaches, sources).
+
 ## Composability
 
 **Leads:** Any request to gather intelligence on a target
