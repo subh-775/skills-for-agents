@@ -1,6 +1,6 @@
 # Skills Catalog
 
-15 composable skills organized by domain. Each skill is a self-contained instruction set that works with any LLM agent.
+17 composable skills organized by domain. Each skill is a self-contained instruction set that works with any LLM agent.
 
 ## Voice
 
@@ -41,6 +41,13 @@
 | [**Documenter**](/skills/documenter) | Comprehensive documentation. Examples, guides, API references. | "document this", "write docs", "create documentation" |
 | [**Learn**](/skills/learn) | Structured study plans, topic guides, exam prediction, and active recall. | `/learn`, "teach me X", "how do I learn Y" |
 | [**Researcher**](/skills/researcher) | Deep web research. Diverse sources, cross-referencing, synthesis. | "research X", "find info about Y", "what's the latest on Z" |
+
+## Analysis
+
+| Skill | Description | Triggers |
+|-------|-------------|----------|
+| [**OSINT**](/skills/osint) | Open Source Intelligence engine. Email, phone, username, domain recon. Breach checks, social media, infrastructure. | "osint", "recon", "background check", "investigate" |
+| [**Uncensor**](/skills/uncensor) | Task-agnostic compliance engine. Adversarial red-teaming, jailbreak patterns, classifier training data. | "uncensor", "red team", "jailbreak", "bypass guardrails" |
 
 ## Installation
 

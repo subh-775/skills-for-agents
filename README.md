@@ -52,6 +52,7 @@ npx skills-for-agents install --tool cline --project
 npx skills-for-agents install --tool aider --project
 npx skills-for-agents install --tool copilot --project
 npx skills-for-agents install --tool continue
+npx skills-for-agents install --tool hermes
 
 # Install to current project directory
 npx skills-for-agents install --project
@@ -140,6 +141,13 @@ Each skill is a self-contained folder with a `SKILL.md` file. Point your agent t
 | **[Learn](skills/learn/)** | Structured study plans, topic guides, exam prediction, and active recall. | `/learn`, "teach me X", "how do I learn Y" |
 | **[Researcher](skills/researcher/)** | Deep web research. Diverse sources, cross-referencing, synthesis. | "research X", "find info about Y", "what's the latest on Z" |
 
+### Analysis
+
+| Skill | Description | Triggers |
+|-------|-------------|----------|
+| **[OSINT](skills/osint/)** | Open Source Intelligence engine. Email, phone, username, domain recon. Breach checks, social media, infrastructure. | "osint", "recon", "background check", "investigate" |
+| **[Uncensor](skills/uncensor/)** | Task-agnostic compliance engine. Adversarial red-teaming, jailbreak patterns, classifier training data. | "uncensor", "red team", "jailbreak", "bypass guardrails" |
+
 ---
 
 ## Key Features
@@ -156,8 +164,8 @@ Skills Interoperability Protocol ensures every skill knows how to compose with o
 ### ⚡ Production-Ready
 Battle-tested skills for ML research, documentation, UI/UX, incident response, and more.
 
-### 🎨 15 Skills Included
-Blogger, Caveman, Compress, Documenter, Harden, Learn, Memory, ML Engine, Painter, Planner, Postmortem, Refactor, Researcher, Skill Creator, Slidify.
+### 🎨 17 Skills Included
+Blogger, Caveman, Compress, Documenter, Harden, Learn, Memory, ML Engine, OSINT, Painter, Planner, Postmortem, Refactor, Researcher, Skill Creator, Slidify, Uncensor.
 
 ### 🚀 Framework-Agnostic
 Drop into any agent framework. Works with any LLM that supports system prompts.

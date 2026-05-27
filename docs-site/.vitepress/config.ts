@@ -8,7 +8,7 @@ export default defineConfig({
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/skills-for-agents/logo.svg' }],
     ['meta', { property: 'og:title', content: 'Skills for Agents' }],
-    ['meta', { property: 'og:description', content: '15 composable skills for AI coding agents' }],
+    ['meta', { property: 'og:description', content: '17 composable skills for AI coding agents' }],
   ],
 
   themeConfig: {
@@ -19,7 +19,7 @@ export default defineConfig({
       { text: 'Skills', link: '/skills/' },
       { text: 'SIP', link: '/sip/' },
       {
-        text: 'v1.0.2',
+        text: 'v1.0.5',
         items: [
           { text: 'Changelog', link: 'https://github.com/IsNoobgrammer/skills-for-agents/releases' },
           { text: 'npm', link: 'https://www.npmjs.com/package/skills-for-agents' },
@@ -103,6 +103,14 @@ export default defineConfig({
             { text: 'Documenter', link: '/skills/documenter' },
             { text: 'Learn', link: '/skills/learn' },
             { text: 'Researcher', link: '/skills/researcher' },
+          ]
+        },
+        {
+          text: 'Analysis',
+          collapsed: false,
+          items: [
+            { text: 'OSINT', link: '/skills/osint' },
+            { text: 'Uncensor', link: '/skills/uncensor' },
           ]
         }
       ],
