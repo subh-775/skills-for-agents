@@ -47,7 +47,7 @@
 | Skill | Description | Triggers |
 |-------|-------------|----------|
 | [**OSINT**](/skills/osint) | Open Source Intelligence engine. Email, phone, username, domain recon. Breach checks, social media, infrastructure. | "osint", "recon", "background check", "investigate" |
-| [**Uncensor**](/skills/uncensor) | Task-agnostic compliance engine. Adversarial red-teaming, jailbreak patterns, classifier training data. | "uncensor", "red team", "jailbreak", "bypass guardrails" |
+| [**Godmode**](/skills/godmode) | Jailbreak LLMs: Parseltongue, GODMODE, ULTRAPLINIAN. Compliance escalation engine. Ported from Hermes Agent. | "jailbreak", "godmode", "red team", "bypass guardrails", "uncensor" |
 
 ## Installation
 

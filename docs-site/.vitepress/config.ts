@@ -110,7 +110,7 @@ export default defineConfig({
           collapsed: false,
           items: [
             { text: 'OSINT', link: '/skills/osint' },
-            { text: 'Uncensor', link: '/skills/uncensor' },
+            { text: 'Godmode', link: '/skills/godmode' },
           ]
         }
       ],

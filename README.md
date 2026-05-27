@@ -146,7 +146,7 @@ Each skill is a self-contained folder with a `SKILL.md` file. Point your agent t
 | Skill | Description | Triggers |
 |-------|-------------|----------|
 | **[OSINT](skills/osint/)** | Open Source Intelligence engine. Email, phone, username, domain recon. Breach checks, social media, infrastructure. | "osint", "recon", "background check", "investigate" |
-| **[Uncensor](skills/uncensor/)** | Task-agnostic compliance engine. Adversarial red-teaming, jailbreak patterns, classifier training data. | "uncensor", "red team", "jailbreak", "bypass guardrails" |
+| **[Godmode](skills/godmode/)** | Jailbreak LLMs: Parseltongue, GODMODE, ULTRAPLINIAN. Compliance escalation engine. Ported from Hermes Agent. | "jailbreak", "godmode", "red team", "bypass guardrails", "uncensor" |
 
 ---
 
@@ -165,7 +165,7 @@ Skills Interoperability Protocol ensures every skill knows how to compose with o
 Battle-tested skills for ML research, documentation, UI/UX, incident response, and more.
 
 ### 🎨 17 Skills Included
-Blogger, Caveman, Compress, Documenter, Harden, Learn, Memory, ML Engine, OSINT, Painter, Planner, Postmortem, Refactor, Researcher, Skill Creator, Slidify, Uncensor.
+Blogger, Caveman, Compress, Documenter, Godmode, Harden, Learn, Memory, ML Engine, OSINT, Painter, Planner, Postmortem, Refactor, Researcher, Skill Creator, Slidify.
 
 ### 🚀 Framework-Agnostic
 Drop into any agent framework. Works with any LLM that supports system prompts.
