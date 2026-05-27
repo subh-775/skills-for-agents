@@ -283,6 +283,110 @@ curl "https://ipinfo.io/IP/json?token=TOKEN"
 
 ---
 
+## Automation Scripts
+
+This skill ships with production-ready scripts in `scripts/`. These are the OSINT engines — the agent calls them, they do the heavy lifting.
+
+### Quick Start
+
+```bash
+# Primary: Python-based (no external deps, works everywhere)
+python scripts/osint_core.py orchestrator <target> <type>
+
+# Individual tools
+python scripts/osint_core.py username <username>
+python scripts/osint_core.py email <email>
+python scripts/osint_core.py domain <domain>
+python scripts/osint_core.py ip <ip>
+python scripts/osint_core.py social <username>
+python scripts/osint_core.py dork <domain>
+
+# Optional: install CLI tools for enhanced coverage
+bash scripts/setup.sh
+python scripts/install_tools.py --check
+```
+
+### Script Catalog
+
+**Primary (Python, no deps):**
+
+| Script | Input | What It Does |
+|--------|-------|-------------|
+| `osint_core.py orchestrator` | `<target> <type>` | Master — chains all tools, single output dir |
+| `osint_core.py username` | `<username>` | 50+ sites via parallel HTTP (no API needed) |
+| `osint_core.py email` | `<email>` | Platform check + domain analysis + username search |
+| `osint_core.py domain` | `<domain>` | DNS + crt.sh + HTTP headers + robots.txt + security.txt |
+| `osint_core.py ip` | `<ip>` | ipinfo + Shodan + AbuseIPDB + VirusTotal |
+| `osint_core.py social` | `<username>` | GitHub + Reddit + Keybase + npm + PyPI profiles |
+| `osint_core.py dork` | `<domain>` | 20+ Google dork queries (execute manually or via API) |
+
+**Supplementary (bash, requires CLI tools):**
+
+| Script | Input | What It Does | Requires |
+|--------|-------|-------------|----------|
+| `username_enum.sh` | `<username>` | Sherlock + Maigret (3400+ sites) | sherlock, maigret |
+| `email_osint.sh` | `<email>` | Holehe + HIBP + h8mail | holehe, h8mail |
+| `phone_osint.sh` | `<phone>` | PhoneInfoga + NumVerify | phoneinfoga |
+| `domain_recon.sh` | `<domain>` | theHarvester + Subfinder | theHarvester, subfinder |
+| `ip_recon.sh` | `<ip>` | Shodan + nmap + AbuseIPDB | nmap, shodan key |
+| `metadata_extract.sh` | `<file>` | EXIF + GPS + strings | exiftool |
+| `social_media.sh` | `<user>` | Instagram + web crawl | instaloader, photon |
+| `breach_check.sh` | `<email>` | HIBP + h8mail + IntelX | h8mail, HIBP key |
+| `setup.sh` | — | Install all CLI tools | pip, go |
+| `install_tools.py` | `--check` | Tool status checker | python |
+| `utils.sh` | — | Shared bash functions | bash, jq |
+
+### Target Types for Orchestrator
+
+```bash
+python scripts/osint_core.py orchestrator user@example.com email    # Email → platforms + breaches + domain
+python scripts/osint_core.py orchestrator +15551234567 phone        # Phone → carrier + location + social
+python scripts/osint_core.py orchestrator johndoe username          # Username → 50+ sites + social profiles
+python scripts/osint_core.py orchestrator example.com domain        # Domain → DNS + certs + headers + dorks
+python scripts/osint_core.py orchestrator 1.2.3.4 ip               # IP → geo + ports + services + reputation
+python scripts/osint_core.py orchestrator "John Doe" person         # Person → username + social + email
+```
+
+### Environment Variables (API Keys)
+
+Set these for enhanced coverage. Scripts degrade gracefully without them:
+
+```bash
+export HIBP_API_KEY="..."       # Have I Been Pwned (breach data)
+export SHODAN_API_KEY="..."     # Shodan (internet-wide scan data)
+export IPINFO_TOKEN="..."       # ipinfo.io (IP geolocation)
+export NUMVERIFY_API_KEY="..."  # NumVerify (phone validation)
+export GOOGLE_API_KEY="..."     # Google Custom Search (dork execution)
+export GOOGLE_CSE_ID="..."      # Google Custom Search Engine ID
+export ABUSEIPDB_KEY="..."      # AbuseIPDB (IP reputation)
+export INTELX_API_KEY="..."     # IntelX (dark web + leaks)
+export VT_API_KEY="..."         # VirusTotal (file hash check)
+```
+
+### Output Format
+
+All scripts output JSON to `<output_dir>/data/`. The orchestrator merges everything into `master_report.json`. This JSON is the data backbone for the HTML report — every data point from every tool in one structured file.
+
+### Agent Usage Pattern
+
+When the agent runs an OSINT task:
+
+1. Call `python scripts/osint_core.py orchestrator <target> <type>` — chains tools into ONE output dir
+2. Read `data/master_report.json` — all findings merged in one place
+3. Generate HTML report from the JSON (per Report Filing Protocol)
+4. Present key findings to user
+
+For targeted recon, call individual commands:
+```bash
+python scripts/osint_core.py username johndoe      # Just username search
+python scripts/osint_core.py social johndoe         # Just social profiles
+python scripts/osint_core.py domain example.com     # Just domain recon
+```
+
+All output goes to `~/osint/<target>_<date>/` — one folder per investigation, never multiple slugs.
+
+---
+
 ## Composability — Working With Other Skills
 
 > **See `PROTOCOL.md` (SIP) at skills root for full interop contract.**

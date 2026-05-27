@@ -127,6 +127,61 @@ All OSINT reports are saved as **visual HTML dashboards** — not plain text.
 
 The main report opens with impact stat cards, a platform presence grid, breach timeline chart, risk assessment radar, and key findings cards. Links to supporting pages (identity, infrastructure, breaches, sources).
 
+## Automation Scripts
+
+OSINT ships with production-ready scripts that chain multiple tools together.
+
+### Quick Start
+
+```bash
+# Primary: Python-based (no external deps, works everywhere)
+python scripts/osint_core.py orchestrator <target> <type>
+
+# Individual tools
+python scripts/osint_core.py username <username>   # 50+ sites
+python scripts/osint_core.py email <email>          # platforms + domain
+python scripts/osint_core.py domain <domain>        # DNS + certs + headers
+python scripts/osint_core.py ip <ip>                # geo + ports + reputation
+python scripts/osint_core.py social <username>      # GitHub + Reddit + npm
+python scripts/osint_core.py dork <domain>          # 20+ Google dork queries
+```
+
+### Scripts
+
+**Primary (osint_core.py — no deps, single output dir):**
+
+| Command | What It Does |
+|---------|-------------|
+| `orchestrator <target> <type>` | Full recon, all tools, one folder |
+| `username <user>` | 50+ sites via parallel HTTP |
+| `email <email>` | Platforms + domain + username |
+| `domain <domain>` | DNS + crt.sh + headers + robots.txt |
+| `ip <ip>` | ipinfo + Shodan + AbuseIPDB + VirusTotal |
+| `social <user>` | GitHub + Reddit + Keybase + npm + PyPI |
+| `dork <domain>` | 20+ Google dork queries |
+
+**Supplementary (bash — requires CLI tools via `setup.sh`):**
+
+| Script | What It Does |
+|--------|-------------|
+| `username_enum.sh` | Sherlock + Maigret (3400+ sites) |
+| `email_osint.sh` | Holehe + HIBP + h8mail |
+| `domain_recon.sh` | theHarvester + Subfinder |
+| `setup.sh` | Install all CLI tools |
+
+### Target Types
+
+```
+email    → platforms + breaches + domain recon
+phone    → carrier + location + social links
+username → 50+ sites + social profiles
+domain   → DNS + certs + headers + dorks
+ip       → geo + ports + services + reputation
+person   → username + social + email
+```
+
+All output goes to ONE folder: `~/osint/<target>_<date>/`. Orchestrator merges everything into `master_report.json`.
+
 ## Composability
 
 **Leads:** Any request to gather intelligence on a target
