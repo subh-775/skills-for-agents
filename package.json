@@ -1,6 +1,6 @@
 {
   "name": "skills-for-agents",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "15 composable skills for AI coding agents — install via npx",
   "bin": {
     "skills-for-agents": "./bin/cli.js"
