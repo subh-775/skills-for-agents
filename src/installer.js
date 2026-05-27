@@ -9,6 +9,23 @@ const path = require("path");
 const os = require("os");
 
 const HOME = os.homedir();
+// ─── Cross-platform path helpers ──────────────────────────────────────────────
+
+function getHermesSkillsDir() {
+  const platform = os.platform();
+  if (platform === "win32") {
+    const localAppData =
+      process.env.LOCALAPPDATA || path.join(HOME, "AppData", "Local");
+    return path.join(localAppData, "hermes", "skills");
+  } else if (platform === "darwin") {
+    return path.join(HOME, "Library", "Application Support", "hermes", "skills");
+  } else {
+    const xdgData =
+      process.env.XDG_DATA_HOME || path.join(HOME, ".local", "share");
+    return path.join(xdgData, "hermes", "skills");
+  }
+}
+
 
 // ─── Tool definitions ───────────────────────────────────────────────────────
 
@@ -23,6 +40,15 @@ const TOOLS = {
         fs.existsSync(path.join(HOME, ".openclaude")) ||
         fs.existsSync(path.join(HOME, ".openclaude", "skills"))
       );
+    },
+  },
+  hermes: {
+    name: "Hermes Agent",
+    global: path.join(getHermesSkillsDir(), "sfa"),
+    project: null,
+    format: "folder",
+    detect() {
+      return fs.existsSync(getHermesSkillsDir());
     },
   },
   claude: {
@@ -291,7 +317,7 @@ async function install({
   const skillNames = getSkillDirs(skillsRoot);
   const toInstall = only || skillNames;
 
-  console.log(`\n  skills-for-agents v1.0.3\n`);
+  console.log(`\n  skills-for-agents v1.0.5\n`);
   console.log(`  Skills: ${toInstall.length} found\n`);
 
   // Determine which tools to install to

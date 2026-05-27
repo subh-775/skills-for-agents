@@ -65,7 +65,7 @@ function showHelp() {
   INSTALL OPTIONS:
     --tool <name>    Target a specific tool (can repeat)
                      Supported: antigravity, claude, codex, cursor, windsurf,
-                     kiro, zed, cline, aider, copilot, continue
+                     kiro, zed, cline, aider, copilot, continue, hermes
     --all            Install to every supported tool
     --project        Install to current project directory
     --global         Install to global config directories
