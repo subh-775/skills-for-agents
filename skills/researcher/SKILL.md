@@ -342,16 +342,110 @@ official docs → GitHub examples → English blogs → **Zhihu/CSDN** → **Bil
 
 ## Output Formats
 
-Match output to user's goal. Structural guides, not rigid templates:
+Match output to user's goal. **All research reports are saved as visual HTML** — not plain text.
 
-### Context Feed → Quick summary + getting-started links + gotchas
-### Overview → What, how, key features, ecosystem, getting started, gotchas
-### Deep Dive → Executive summary, architecture, benchmarks, implementation, comparisons, edge cases, optimization, sources by type
-### Comparison → Quick recommendation, feature matrix, performance data, when to choose each
-### Hypothesis Test → Prior work, limitations, failure modes, skeptical review, recommendation
-### Diagnostic → Symptom, likely causes + verification steps, known solutions, case studies
+### Folder Structure
 
-**Every output ends with a Sources section.** Organize by type (Official, Community, Chinese, Academic, Blogs, Video). Include dates.
+```
+~/researcher/<topic_slug>_<DD>_<MONTH>_<YYYY>/
+├── index.html          # Main report (entry point)
+├── sources.html        # Full source list + methodology
+├── deep-dive.html      # (optional) Extended analysis for deep dives
+├── comparison.html     # (optional) Feature matrices for comparisons
+├── assets/
+│   ├── style.css       # Shared dark-theme stylesheet
+│   └── charts.js       # Chart.js config for data visualizations
+└── data/
+    └── findings.json   # Raw structured data (machine-readable backup)
+```
+
+- `<topic_slug>` = lowercase kebab-case of research topic. Strip special characters.
+- `<DD>` = two-digit day
+- `<MONTH>` = uppercase month abbreviation
+- `<YYYY>` = four-digit year
+
+**Examples:**
+- `researcher/tpu-v5e-distributed-training_27_MAY_2026/index.html`
+- `researcher/bibo-moe-vs-qwen3_15_JAN_2026/index.html`
+- `researcher/pytorch-compile-warmup_03_MAR_2026/index.html`
+
+### Report Types → HTML Mapping
+
+| User Goal | What Gets Generated | Visual Elements |
+|-----------|-------------------|-----------------|
+| **Context Feed** | `index.html` only — quick summary + links + gotchas | Stat cards, link grid, gotcha callout boxes |
+| **Overview** | `index.html` + `sources.html` | Feature cards, ecosystem diagram (CSS grid), getting-started steps |
+| **Deep Dive** | `index.html` + `deep-dive.html` + `sources.html` | Benchmark charts (Chart.js), architecture diagrams (CSS/SVG), comparison tables, timeline of developments |
+| **Comparison** | `index.html` + `comparison.html` + `sources.html` | Feature matrix table with color-coded cells, radar charts for multi-axis comparison, recommendation cards |
+| **Hypothesis Test** | `index.html` + `sources.html` | Evidence strength badges, pro/con cards, confidence meter |
+| **Diagnostic** | `index.html` only | Symptom→cause flowchart (CSS), solution cards with copy-paste code blocks |
+
+### HTML Report Requirements
+
+Every research report MUST be a **visually polished, self-contained HTML document**. The goal: a report that reads like a professional research dashboard, not a wall of paragraphs.
+
+#### Design Rules
+
+1. **Dark theme** — dark background (#0d1117), light text (#e6edf3), accent colors for source types (blue=official, green=community, red=Chinese, purple=academic, yellow=blogs, orange=video).
+2. **Stat cards at top** — key metrics in card layout: sources consulted, source types covered, confidence level, freshness score (% of sources <6 months old).
+3. **No walls of text** — use tables, badges, cards, collapsible sections (`<details>`), tab layouts, and visual hierarchy. Every section should scan in <5 seconds.
+4. **Charts for data** — use Chart.js (CDN: `https://cdn.jsdelivr.net/npm/chart.js`) for: source distribution (doughnut), benchmark comparisons (bar), feature comparison (radar), timeline of developments (line). Inline the config in a `<script>` tag.
+5. **Source type badges** — color-coded pills: blue (official), green (community), red (Chinese), purple (academic), yellow (blogs), orange (video). Each source gets its badge.
+6. **Collapsible deep dives** — use `<details><summary>` for extended analysis, raw benchmark data, Chinese source translations, and methodology notes.
+7. **Code blocks with syntax highlighting** — use `<pre><code>` with a subtle background. Include copy-paste commands for getting-started sections.
+8. **Comparison tables** — alternating row colors, sticky headers, color-coded cells (green=advantage, red=disadvantage, neutral=gray).
+9. **Responsive** — works on desktop and mobile. Use `meta viewport` and media queries.
+10. **Self-contained** — all CSS inline or in `assets/style.css`. System fonts stack. Chart.js is the only allowed CDN dependency.
+
+#### CSS Theme (assets/style.css)
+
+```css
+:root {
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-card: #21262d;
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --border: #30363d;
+  --accent-blue: #58a6ff;
+  --accent-green: #3fb950;
+  --accent-red: #f85149;
+  --accent-purple: #bc8cff;
+  --accent-yellow: #d29922;
+  --accent-orange: #db6d28;
+}
+```
+
+#### index.html Structure
+
+- **Header**: topic title, report date, report type badge (Context Feed / Deep Dive / etc.)
+- **Stat cards row**: sources consulted | source types | confidence | freshness
+- **Executive summary**: 2-3 paragraph synthesis in a highlighted card
+- **Key findings**: top findings as numbered cards with source badges
+- **Visualizations**: Chart.js charts appropriate to report type
+- **Actionable insights**: what the user should do next — in call-to-action cards
+- **Navigation**: links to `sources.html`, `deep-dive.html`, `comparison.html` (if they exist)
+
+#### Data Backup (data/findings.json)
+
+Dump structured findings to `data/findings.json`:
+```json
+{
+  "topic": "research topic",
+  "report_type": "context_feed|overview|deep_dive|comparison|hypothesis_test|diagnostic",
+  "date": "YYYY-MM-DD",
+  "sources": [{"type": "official|community|chinese|academic|blog|video", "url": "...", "title": "...", "date": "...", "reliability": "high|medium|low"}],
+  "findings": [{"claim": "...", "evidence": ["..."], "confidence": "high|medium|low", "sources": ["..."]}],
+  "contradictions": [{"topic": "...", "source_a": "...", "source_b": "...", "resolution": "..."}],
+  "recommendation": "..."
+}
+```
+
+### Folder Location
+
+Create the folder under the user's home directory (`~/researcher/`) unless a project-specific location is more appropriate. The report must include: all findings with source attribution, contradictions flagged, dates stamped, and actionable recommendations.
+
+**Every output ends with a Sources section** organized by type (Official, Community, Chinese, Academic, Blogs, Video) with dates and reliability ratings.
 
 ---
 

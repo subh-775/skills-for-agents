@@ -41,7 +41,7 @@ This skill forces the structure so your 3am brain doesn't skip the root cause an
 **Do this first. Always.**
 
 ```bash
-# Create postmortem folder if not exists
+# Create postmortem root folder if not exists
 mkdir -p postmortem
 
 # Add to .gitignore (postmortems can have sensitive blast radius / customer impact data)
@@ -52,6 +52,21 @@ fi
 ```
 
 If no `.gitignore` exists, create one with `postmortem/` as first entry.
+
+Each incident gets its own subfolder inside `postmortem/`:
+```
+postmortem/
+└── YYYY-MM-DD-<slug>/
+    ├── index.html          # Main report (entry point)
+    ├── timeline.html       # Detailed timeline with visualizations
+    ├── root-cause.html     # 5 Whys deep dive + system diagrams
+    ├── action-items.html   # Action item tracker with status
+    ├── assets/
+    │   ├── style.css       # Shared dark-theme stylesheet
+    │   └── charts.js       # Chart.js config
+    └── data/
+        └── incident.json   # Raw structured data (machine-readable backup)
+```
 
 ---
 
@@ -80,138 +95,86 @@ If user gives a wall of text / Slack dump / runbook notes — parse it. Extract 
 
 ## STEP 2: Generate the Report
 
-File: `postmortem/YYYY-MM-DD-<slug>.md`
+Folder: `postmortem/YYYY-MM-DD-<slug>/`
 
 Slug = lowercase kebab-case of incident title.
-Example: `postmortem/2024-01-15-payment-service-db-pool-exhaustion.md`
+Example: `postmortem/2024-01-15-payment-service-db-pool-exhaustion/index.html`
 
-Use this template. Fill everything. Never leave `[TBD]` in P0/P1 sections.
+### HTML Report Requirements
 
-```markdown
-# Postmortem: {INCIDENT_TITLE}
+Every postmortem report MUST be a **visually polished, self-contained HTML document**. The goal: a report that looks like a professional incident dashboard — scannable, visual, not a text wall.
 
-**Date**: {DATE}  
-**Authors**: {AUTHORS}  
-**Status**: Draft  
-**Severity**: {SEV_LEVEL}  
-**Duration**: {DURATION}  
+#### Design Rules
 
----
+1. **Dark theme** — dark background (#0d1117), light text (#e6edf3), severity accent colors: red=SEV1, orange=SEV2, yellow=SEV3, blue=SEV4.
+2. **Impact stat cards at top** — severity badge, duration, users affected, revenue impact, time to detect, time to resolve — in a prominent card row.
+3. **No walls of text** — use tables, badges, cards, collapsible sections (`<details>`), and visual hierarchy. Every section should scan in <5 seconds.
+4. **Charts for data** — use Chart.js (CDN: `https://cdn.jsdelivr.net/npm/chart.js`) for: incident timeline (line chart with annotated events), error rate over time (area chart), impact breakdown (doughnut). Inline the config in a `<script>` tag.
+5. **Severity badges** — color-coded: `SEV1` (red), `SEV2` (orange), `SEV3` (yellow), `SEV4` (blue). Prominent in header.
+6. **Visual timeline** — the timeline is NOT just a table. Use a vertical timeline component with colored dots (red=detection, yellow=mitigation, green=resolution), timestamps, and event descriptions. CSS-based, no external deps.
+7. **5 Whys visualization** — render as a cascading card chain, not a table. Each "Why" card connects to the next with an arrow/line. Color deepens as you go deeper (light yellow -> dark orange -> red for root cause).
+8. **System diagram** — use CSS/SVG to show the affected system flow. Boxes for services, arrows for data flow, red highlight on the failure point. Replace ASCII art with actual visual diagrams.
+9. **Action item cards** — each action item gets its own card with priority badge (P0=red, P1=orange, P2=yellow), owner avatar placeholder, due date, and status indicator.
+10. **Responsive** — works on desktop and mobile.
+11. **Self-contained** — all CSS inline or in `assets/style.css`. System fonts stack. Chart.js is the only allowed CDN dependency.
+12. **Print-friendly** — include `@media print` rules.
 
-## TL;DR
+#### CSS Theme (assets/style.css)
 
-{ONE PARAGRAPH. What broke. For how long. How many users. Root cause in one sentence. What fixed it.}
-
-**Impact snapshot:**
-- Users affected: {N}
-- Duration: {DURATION}
-- Revenue impact: {$ or "Not quantified"}
-- Data loss: Yes / No
-- Security implications: Yes / No
-
----
-
-## Timeline
-
-> All times UTC/IST (IST preferred if user based in India). Be precise. Approximate is fine, blank is not.
-
-| Time | Event |
-|------|-------|
-{TIMELINE_ROWS}
-
----
-
-## Root Cause
-
-### What happened
-
-{2-3 sentences. Mechanical. What actually failed.}
-
-### Why it happened — 5 Whys
-
-| # | Question | Answer | Evidence |
-|---|----------|--------|----------|
-| 1 | Why did {SYMPTOM} occur? | {ANSWER} | {METRIC / LOG / CODE} |
-| 2 | Why did {ANSWER_1} happen? | {ANSWER} | {EVIDENCE} |
-| 3 | Why did {ANSWER_2} happen? | {ANSWER} | {EVIDENCE} |
-| 4 | Why did {ANSWER_3} happen? | {ANSWER} | {EVIDENCE} |
-| 5 | Why did {ANSWER_4} happen? | {ANSWER} | {EVIDENCE} |
-
-**Identified root causes:**
-- Primary: {ROOT_CAUSE}
-- Contributing: {CONTRIBUTING_FACTORS}
-
-### System context
-
-```
-{ASCII diagram of affected system flow — even rough is fine}
+```css
+:root {
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-card: #21262d;
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --border: #30363d;
+  --accent-green: #3fb950;
+  --accent-yellow: #d29922;
+  --accent-red: #f85149;
+  --accent-orange: #db6d28;
+  --accent-blue: #58a6ff;
+  --accent-purple: #bc8cff;
+}
 ```
 
----
+#### index.html Structure
 
-## Detection
+- **Header**: incident title, severity badge, status badge (Draft/Reviewed/Actioned), report date
+- **Impact stat cards row**: severity | duration | users affected | revenue impact | TTD | TTR
+- **TL;DR card**: one-paragraph summary in a highlighted box with severity-colored left border
+- **Visual timeline**: vertical timeline with colored event markers
+- **System diagram**: CSS/SVG diagram of affected flow with failure point highlighted
+- **Key findings**: root cause summary in a cascading card chain
+- **Action items preview**: top 3 P0 items as cards, link to full list
+- **Navigation**: links to `timeline.html`, `root-cause.html`, `action-items.html`
 
-**Time to detect**: {N} minutes after incident start  
-**Detected by**: Alert / Customer report / On-call observation
+#### Supporting Pages
 
-### What worked
-- {THING}
+- **timeline.html**: Full detailed timeline with every event. Chart.js line chart showing error rate over time with annotated incident milestones. Expandable event details.
+- **root-cause.html**: Full 5 Whys as cascading cards. System context diagram (detailed). Detection and response analysis. Lessons learned cards (went well / went wrong / got lucky).
+- **action-items.html**: Complete action item tracker. Sortable table with priority, owner, due date, status, ticket link. Priority breakdown chart (doughnut).
 
-### What didn't
-- {THING}
+#### Data Backup (data/incident.json)
 
-### Detection gap
-{Was there a gap between when the issue started and when we knew? What would close it?}
-
----
-
-## Response
-
-**Time to resolve**: {N} minutes from detection  
-**Responders**: {NAMES / HANDLES}
-
-### What worked
-- {THING}
-
-### What could be faster
-- {THING}
-
----
-
-## Lessons
-
-### Went well
-1. {THING}
-
-### Went wrong
-1. {THING}
-
-### Got lucky
-1. {THING — be honest here, luck is real and pretending otherwise is how you get surprised again}
-
----
-
-## Action Items
-
-> P0 = fix before next deploy. P1 = this sprint. P2 = this quarter.
-
-| Priority | Action | Owner | Due | Ticket |
-|----------|--------|-------|-----|--------|
-{ACTION_ROWS}
-
----
-
-## Appendix
-
-### Metrics / Graphs
-{Links to dashboards, snapshots — or describe what you'd want to see here}
-
-### Related incidents
-{Prior incidents with same failure mode, if known}
-
-### References
-{Runbooks consulted, docs, PRs reviewed}
+```json
+{
+  "title": "incident title",
+  "severity": "SEV1|SEV2|SEV3|SEV4",
+  "date": "YYYY-MM-DD",
+  "duration": "duration",
+  "impact": {"users_affected": 0, "revenue_impact": "", "data_loss": false, "security_implications": false},
+  "timeline": [{"time": "HH:MM", "event": "...", "type": "detection|mitigation|resolution|other"}],
+  "root_cause": {"primary": "", "contributing": []},
+  "five_whys": [{"question": "", "answer": "", "evidence": ""}],
+  "detection": {"time_to_detect_min": 0, "detected_by": "", "worked": [], "failed": []},
+  "response": {"time_to_resolve_min": 0, "responders": [], "worked": [], "could_be_faster": []},
+  "lessons": {"went_well": [], "went_wrong": [], "got_lucky": []},
+  "action_items": [{"priority": "P0|P1|P2", "action": "", "owner": "", "due": "", "ticket": ""}]
+}
 ```
+
+Use this JSON as the data backbone. Every HTML page reads from this structure. If the HTML ever needs regeneration, the JSON has everything.
 
 ---
 
@@ -230,20 +193,27 @@ Before saving, check:
 
 ## STEP 4: Save and Confirm
 
-```bash
-# Save file
-cat > postmortem/YYYY-MM-DD-slug.md << 'EOF'
-{REPORT CONTENT}
-EOF
+Create the full folder structure:
 
-echo "postmortem saved: postmortem/YYYY-MM-DD-slug.md"
+```bash
+SLUG="YYYY-MM-DD-incident-slug"
+mkdir -p "postmortem/$SLUG/assets"
+mkdir -p "postmortem/$SLUG/data"
+
+# Write all HTML files (index.html, timeline.html, root-cause.html, action-items.html)
+# Write assets/style.css and assets/charts.js
+# Write data/incident.json
+
+echo "postmortem saved: postmortem/$SLUG/"
+echo "entry point: postmortem/$SLUG/index.html"
 echo "gitignored: yes"
 ```
 
 Tell user:
-1. File location
+1. Folder location and that `index.html` is the entry point
 2. That it's gitignored (so sensitive impact data stays local)
 3. Suggest next: share in incident channel, create tickets for P0s
+4. All supporting pages (timeline, root-cause, action-items) are linked from index.html
 
 ---
 
@@ -284,12 +254,21 @@ See the "When to Use" section above for the full list of trigger phrases.
 ## Files Created by This Skill
 
 ```
-postmortem/                    # gitignored, auto-created
-└── YYYY-MM-DD-<slug>.md      # the report
-.gitignore                     # updated with postmortem/ entry
+postmortem/                           # gitignored, auto-created
+└── YYYY-MM-DD-<slug>/               # per-incident folder
+    ├── index.html                    # main report (entry point)
+    ├── timeline.html                 # detailed timeline + charts
+    ├── root-cause.html               # 5 whys + system diagrams
+    ├── action-items.html             # action item tracker
+    ├── assets/
+    │   ├── style.css                 # dark theme stylesheet
+    │   └── charts.js                 # Chart.js configurations
+    └── data/
+        └── incident.json             # raw structured data backup
+.gitignore                            # updated with postmortem/ entry
 ```
 
-That's it. No extra config. No setup. Just: incident happens → run skill → file exists → tickets exist → done.
+That's it. No extra config. No setup. Just: incident happens -> run skill -> folder exists with visual HTML report -> tickets exist -> done.
 
 ---
 

@@ -328,6 +328,104 @@ yields_to: [process]
 
 ---
 
+## Report Filing Protocol
+
+After completing any OSINT, recon, background check, or intelligence gathering task, ALWAYS save the report as a **visual HTML report** to disk.
+
+### Folder Structure
+
+```
+~/osint/<tag>_<DD>_<MONTH>_<YYYY>/
+├── index.html          # Main report (entry point)
+├── identity.html       # Identity & social media profiles
+├── infrastructure.html # Network, domains, tech stack
+├── breaches.html       # Breach/leak data + dark web findings
+├── sources.html        # Full source list + methodology
+├── assets/
+│   ├── style.css       # Shared dark-theme stylesheet
+│   ├── charts.js       # Chart.js config for data visualizations
+│   └── icons/          # Platform icons (inline SVG or base64)
+└── data/
+    └── findings.json   # Raw structured data (machine-readable backup)
+```
+
+- `<tag>` = lowercase target identifier (username, domain, company name). Strip special characters.
+- `<DD>` = two-digit day
+- `<MONTH>` = uppercase month abbreviation (JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC)
+- `<YYYY>` = four-digit year
+
+**Examples:**
+- `osint/bsbarkur_27_MAY_2026/index.html`
+- `osint/example.com_15_JAN_2026/index.html`
+- `osint/johndoe_03_MAR_2026/index.html`
+
+### HTML Report Requirements
+
+Every OSINT report MUST be a **visually polished, self-contained HTML document**. The goal: a report that looks like a professional threat intel dashboard, not a text dump.
+
+#### Design Rules
+
+1. **Dark theme** — dark background (#0d1117 or similar), light text (#e6edf3), accent colors for severity/confidence (green=low risk, yellow=medium, red=high).
+2. **Stat cards at top** — key metrics in card layout: confidence level, platforms found, breach count, exposed credentials, etc. Use CSS grid or flexbox.
+3. **No walls of text** — use tables, badges, cards, collapsible sections (`<details>`), and visual hierarchy. Every section should scan in <5 seconds.
+4. **Charts for data** — use Chart.js (CDN: `https://cdn.jsdelivr.net/npm/chart.js`) for: breach timeline (bar chart), platform presence (doughnut), risk score (radar). Inline the config in a `<script>` tag.
+5. **Platform icons** — use inline SVG or base64-encoded icons for GitHub, LinkedIn, Twitter, etc. No external image dependencies.
+6. **Color-coded badges** — confidence: green (high), yellow (medium), red (low). Severity: red/orange/yellow/blue for P0-P3. Platform: brand colors.
+7. **Responsive** — works on desktop and mobile. Use `meta viewport` and media queries.
+8. **Self-contained** — all CSS inline or in `assets/style.css`. No external font dependencies (use system fonts stack: `-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif`). Chart.js is the only allowed CDN dependency.
+9. **Collapsible sections** — use `<details><summary>` for verbose sections (raw breach data, full source list, infrastructure details) to keep the main view scannable.
+10. **Print-friendly** — include `@media print` rules so the report prints cleanly.
+
+#### index.html Structure
+
+The main `index.html` is the executive dashboard. It contains:
+
+- **Header**: target identifier, report date, classification, confidence badge
+- **Stat cards row**: total platforms found | breaches | exposed creds | risk score
+- **Identity summary**: name, aliases, location, workplace — in a clean card
+- **Platform presence grid**: cards per platform with profile pic placeholder, follower count, last active
+- **Breach timeline chart**: bar chart showing breach dates
+- **Risk assessment**: radar chart showing risk dimensions (credential exposure, social footprint, infrastructure exposure, dark web presence)
+- **Key findings**: top 5-10 actionable findings in highlighted cards
+- **Navigation**: links to `identity.html`, `infrastructure.html`, `breaches.html`, `sources.html`
+
+#### Supporting Pages
+
+- **identity.html**: Full identity breakdown — all names, emails, phones, addresses, workplaces, education. Tables with alternating row colors. Social media deep dive with full profile data.
+- **infrastructure.html**: Domain map, subdomain tree, IP addresses, open ports table, technology stack visualization, certificate data. Use a visual network diagram (CSS/SVG) showing domain→subdomain→IP relationships.
+- **breaches.html**: Full breach table with sortable columns (date, source, data types, severity). Dark web findings in collapsible cards. Credential exposure summary with color-coded severity.
+- **sources.html**: Every source used, organized by type (official, community, Chinese, academic, dark web). Include access dates, URLs, and reliability rating.
+
+#### CSS Theme (assets/style.css)
+
+Use this base dark theme — adapt colors per section:
+
+```css
+:root {
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-card: #21262d;
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --border: #30363d;
+  --accent-green: #3fb950;
+  --accent-yellow: #d29922;
+  --accent-red: #f85149;
+  --accent-blue: #58a6ff;
+  --accent-purple: #bc8cff;
+}
+```
+
+#### Data Backup (data/findings.json)
+
+Always dump the raw structured findings to `data/findings.json` using the JSON schema from the pipeline section. This is the machine-readable backup — if the HTML ever needs regeneration, the JSON has everything.
+
+### Folder Location
+
+Create the folder under the user's home directory (`~/osint/`) unless a project-specific location is more appropriate. The report must include: identity, employment, technical profile, platform presence, assessment, and sources consulted. Use the JSON schema from the pipeline section as the data backbone, then render it as visual HTML.
+
+---
+
 ## Boundaries
 
 - Gathers intelligence from **publicly available sources only** — no unauthorized access
