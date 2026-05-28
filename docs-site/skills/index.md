@@ -1,6 +1,6 @@
 # Skills Catalog
 
-17 composable skills organized by domain. Each skill is a self-contained instruction set that works with any LLM agent.
+18 composable skills organized by domain. Each skill is a self-contained instruction set that works with any LLM agent.
 
 ## Voice
 
@@ -41,6 +41,12 @@
 | [**Documenter**](/skills/documenter) | Comprehensive documentation. Examples, guides, API references. | "document this", "write docs", "create documentation" |
 | [**Learn**](/skills/learn) | Structured study plans, topic guides, exam prediction, and active recall. | `/learn`, "teach me X", "how do I learn Y" |
 | [**Researcher**](/skills/researcher) | Deep web research. Diverse sources, cross-referencing, synthesis. | "research X", "find info about Y", "what's the latest on Z" |
+
+## GPU Engineering
+
+| Skill | Description | Triggers |
+|-------|-------------|----------|
+| [**Tritonify**](/skills/tritonify) | Agent-driven GPU kernel optimization. Triton + CUDA. 52+ papers, MoE/loss/attention kernels. | "optimize kernel", "write triton", "profile CUDA", "fuse operators" |
 
 ## Analysis
 
