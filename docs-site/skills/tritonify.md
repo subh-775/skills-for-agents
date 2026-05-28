@@ -17,6 +17,33 @@ Agent-driven GPU kernel optimization for Triton and CUDA. Profiling-guided itera
 - MoE dispatch/compute kernel optimization
 - Benchmarking kernels against PyTorch eager or torch.compile
 
+## Liger-Kernel First Policy (MANDATORY)
+
+**Before writing ANY custom Triton kernel, check if Liger-Kernel already provides it.**
+
+| Operation | Liger Module |
+|-----------|-------------|
+| RMSNorm | `liger_kernel.ops.rms_norm` |
+| LayerNorm | `liger_kernel.ops.layer_norm` |
+| SwiGLU | `liger_kernel.ops.swiglu` |
+| GeGLU | `liger_kernel.ops.geglu` |
+| Cross-Entropy | `liger_kernel.ops.cross_entropy` |
+| Fused Linear+CE | `liger_kernel.ops.fused_linear_cross_entropy` |
+| KL/JSD/TVD | `liger_kernel.ops.{kl_div,jsd,tvd}` |
+| GRPO/DPO/SimPO | `liger_kernel.ops.{grpo_loss,dpo_loss,simpo_loss}` |
+| RoPE | `liger_kernel.ops.rope` |
+
+```python
+# Drop-in replacement:
+from liger_kernel.transformers import LigerRMSNorm, LigerSwiGLUMLP, LigerCrossEntropyLoss
+
+# Monkey-patch HuggingFace model:
+from liger_kernel.transformers import monkey_patch
+monkey_patch(model)
+```
+
+Only write custom Triton when: Liger doesn't cover it (conv, MoE, attention variants), need architecture-specific fusion, need different tiling, or doing kernel research. **Never write standalone RMSNorm/SwiGLU/CE/RoPE when Liger provides one.**
+
 ## Triggers
 
 ```
