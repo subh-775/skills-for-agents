@@ -9,3 +9,8 @@ skills/memory/data/
 agents/
 docs-site/.vitepress/cache/
 __pycache__/
+
+# Local only
+research/
+report/
+synthetic-dataset/
