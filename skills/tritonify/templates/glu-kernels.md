@@ -33,10 +33,14 @@ def glukernel(Gate, Up, Out, stride_m, N, BLOCK_N: tl.constexpr):
     gate = tl.load(Gate + row * stride_m + cols, mask=mask).to(tl.float32)
     up = tl.load(Up + row * stride_m + cols, mask=mask).to(tl.float32)
     # Replace with your activation:
-    # SiLU: gate * tl.sigmoid(gate)
-    # tanh: tl.math.tanh(gate)
-    # ReLU²: tl.maximum(gate, 0.0) ** 2
-    # GELU: 0.5 * gate * (1 + tl.math.tanh(0.7978845608 * (gate + 0.044715 * gate * gate * gate)))
+    # SiLU: gate * tl.sigmoid(gate)  [native Triton intrinsic]
+    # tanh: tl.extra.cuda.libdevice.tanh(gate)  [libdevice, slow]
+    #       OR use sigmoid identity: 2.0 * tl.sigmoid(2.0 * gate) - 1.0  [faster]
+    #       OR use exp formula: e2x = tl.exp(2.0 * gate); (e2x - 1) / (e2x + 1)
+    # ReLU²: tl.maximum(gate, 0.0) ** 2  [native Triton]
+    # GELU: 0.5 * gate * (1 + tl.extra.cuda.libdevice.tanh(
+    #           0.7978845608 * (gate + 0.044715 * gate * gate * gate)))
+    #       OR fast approx: gate * tl.sigmoid(1.702 * gate)
     activated = gate * tl.sigmoid(gate)  # SiLU
     out = activated * up
     tl.store(Out + row * stride_m + cols, out.to(tl.float16), mask=mask)
@@ -63,7 +67,10 @@ out = activation(acc_gate) * acc_up
 
 ## Performance Notes
 - FP32 intermediate compute is mandatory for numerical stability
-- tl.sigmoid, tl.math.tanh are native Triton intrinsics
+- `tl.sigmoid` is a native Triton intrinsic (fast)
+- `tl.extra.cuda.libdevice.tanh(x)` is a libdevice call (slow, ~2x overhead vs sigmoid)
+- For tanh, prefer sigmoid identity `2*sigmoid(2x)-1` or exp formula over libdevice
+- `tl.maximum`, `tl.exp`, `tl.log` are native Triton ops (fast)
 - Vectorized loads (processing BLOCK_N elements at once) beat strided access
 - For T4: 8 warps with BLOCK_N=4096-8192 is typically optimal
 - Fused linear+GLU saves 2 memory round-trips (gate_out + up_out eliminated)

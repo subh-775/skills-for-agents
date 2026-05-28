@@ -84,9 +84,8 @@ def tanh_glu_vec_kernel(
     gate = tl.load(Gate + row * stride_m + cols, mask=mask, other=0.0).to(tl.float32)
     up = tl.load(Up + row * stride_m + cols, mask=mask, other=0.0).to(tl.float32)
 
-    # tanh via exp: tanh(x) = (exp(2x) - 1) / (exp(2x) + 1)
-    # Triton has native tanh, but let's use the math version
-    t = tl.math.tanh(gate)
+    # tanh via sigmoid identity (faster than libdevice.tanh)
+    t = 2.0 * tl.sigmoid(2.0 * gate) - 1.0
     out = t * up
 
     tl.store(Out + row * stride_m + cols, out.to(tl.float16), mask=mask)
