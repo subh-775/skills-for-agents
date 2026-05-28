@@ -8,7 +8,7 @@ export default defineConfig({
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/skills-for-agents/logo.svg' }],
     ['meta', { property: 'og:title', content: 'Skills for Agents' }],
-    ['meta', { property: 'og:description', content: '17 composable skills for AI coding agents' }],
+    ['meta', { property: 'og:description', content: '18 composable skills for AI coding agents' }],
   ],
 
   themeConfig: {
@@ -103,6 +103,13 @@ export default defineConfig({
             { text: 'Documenter', link: '/skills/documenter' },
             { text: 'Learn', link: '/skills/learn' },
             { text: 'Researcher', link: '/skills/researcher' },
+          ]
+        },
+        {
+          text: 'GPU Engineering',
+          collapsed: false,
+          items: [
+            { text: 'Tritonify', link: '/skills/tritonify' },
           ]
         },
         {
