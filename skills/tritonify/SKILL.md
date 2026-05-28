@@ -28,9 +28,21 @@ yields_to: [process]
 - Optimizing existing kernels (Triton or CUDA)
 - Fusing multiple operators into single kernels
 - Speeding up LLM training/inference operations
+- **Convolution operations** (conv1d, conv2d, depthwise, grouped, transposed)
+- **Fused conv patterns** (conv+activation, conv+BN, conv+residual)
 - Profiling and diagnosing kernel bottlenecks
 - Generating kernels from PyTorch reference implementations
 - Benchmarking kernel performance against baselines
+
+### Triggers
+
+```
+"optimize kernel", "write triton", "profile CUDA", "fuse operators",
+"speed up LLM ops", "MoE kernel", "fused loss", "attention kernel",
+"beat torch.compile", "kernel benchmark", "write CUDA kernel",
+"convolution kernel", "conv2d triton", "depthwise conv", "im2col",
+"fused conv relu", "conv batchnorm", "conv silu"
+```
 
 ---
 
@@ -485,6 +497,33 @@ def kernel(
 - LayerNorm + dropout + residual → 1 kernel
 - Adam optimizer → 1 kernel (momentum + variance + update)
 
+### Convolution Kernel Patterns (from Triton Gluon, PyTorch Inductor)
+
+- **Conv2d forward** — Implicit GEMM + TMA im2col (Hopper/Blackwell) or tl.dot (all GPUs)
+- **Conv2d dgrad** — Subproblem decomposition for stride > 1, split-K reduction
+- **Conv2d wgrad** — grad_out^T @ im2col(input), tiled over Co × Ci × spatial
+- **Depthwise conv1d** — Direct 3D tiling (NLC), element-wise multiply-accumulate
+- **Fused conv + SiLU** — SiLU in epilogue: `result * tl.sigmoid(result)`
+- **Fused conv + residual** — Load residual + conv output in epilogue
+- **Fused conv + BN** — Pre-compute fused weights on host (eval mode)
+- **Conv + bias + activation** — All in epilogue, no extra kernel launch
+
+**Key APIs:**
+- `TensorDescriptorIm2Col` — TMA im2col descriptor for NHWC input
+- `tma.async_load_im2col(desc, coord, offsets, barrier, smem)` — Hardware im2col load
+- `TensorDescriptor.from_tensor(weight_2d, block_shape, layout)` — TMA for weight
+- `tcgen05_mma(a, b, acc, use_acc)` — Blackwell MMA
+- `gl.warp_specialize(partitions, num_warps, ...)` — Warp specialization
+
+**Critical patterns:**
+- NHWC layout required (permute from NCHW before kernel)
+- Weight reshape: [Co, R, S, Ci] → [Co, R*S*Ci] for 2D TMA
+- Channel padding for TMA 16-byte alignment (Ci=3 → pad to 8)
+- M-offset decomposition: flat M → (batch, out_y, out_x)
+- Autotune key: (out_h, out_w, stride_h, stride_w) not full input shape
+
+See `references/convolution-kernels.md` for complete code patterns.
+
 ---
 
 ## Benchmarking Protocol
@@ -632,12 +671,14 @@ Human expertise + agent assistance > pure agent optimization.
 | `references/llm-optimizations.md` | Every LLM op: attention, norm, activation, RoPE, optimizer, KV cache |
 | `references/profiling-guide.md` | NCU commands, metrics, Triton profiling, decision tree |
 | `references/optimization-playbook.md` | Six-tier optimization framework from AutoKernel |
+| `references/convolution-kernels.md` | Conv2d implicit GEMM, TMA im2col, depthwise, dgrad/wgrad, fused conv patterns |
 | `templates/llm-kernels.py` | 6 ready-to-use Triton kernel templates |
 
 ### When to Load References
 
 - **Optimizing MoE models** → Load `moe-kernels.md`
 - **Writing loss functions** → Load `loss-kernels.md`
+- **Convolution operations** → Load `convolution-kernels.md`
 - **Any LLM operation** → Load `llm-optimizations.md`
 - **Profiling/debugging** → Load `profiling-guide.md`
 - **Starting optimization** → Load `optimization-playbook.md`
@@ -745,8 +786,14 @@ Every optimization MUST define:
 - `osayamenja/FlashMoE` — Persistent kernel MoE
 - `stanford-futuredata/megablocks` — Block-sparse MoE
 - `shawntan/scattermoe` — ParallelLinear MoE
-- `deepseek-ai/DeepGEMM` — FP8 grouped GEMM
+- `rbgo/alpha-moe` — JIT-tuned MoE
 - `Aleph-Alpha/Alpha-MoE` — JIT-tuned MoE
+
+**Convolution:**
+- `triton-lang/triton/python/examples/gluon/02-conv-*.py` — Production conv2d (fprop/dgrad/wgrad)
+- `triton-lang/triton/python/tutorials/gluon/13-conv-im2col.py` — TMA im2col tutorial
+- `pytorch/pytorch/torch/_inductor/kernel/conv.py` — Inductor conv templates
+- `pytorch/pytorch/torch/_inductor/kernel/templates/triton_depthwise_conv.py.jinja` — Depthwise
 
 **Benchmarks:**
 - `thunlp/TritonBench` — 184 Triton operators

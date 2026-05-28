@@ -201,6 +201,30 @@ From MIT KDA's ncu-report-skill. Map profiling data to these patterns to identif
 - **Stable softmax router** — Subtract max, mask top-k to -1.0 (not 0.0)
 - **Routing-aware dispatch** — Adapt tile size to runtime expert histogram (RaMP: 1.30x over vLLM)
 
+### Convolution (from Triton Gluon + PyTorch Inductor)
+- **Conv2d forward** — Implicit GEMM + TMA im2col (Hopper/Blackwell) or tl.dot (all GPUs). M=N×out_h×out_w, N=Co, K=R×S×Ci
+- **Conv2d dgrad** — Input gradient via subproblem decomposition (stride_h × stride_w subproblems) + split-K reduction
+- **Conv2d wgrad** — Weight gradient: grad_out^T @ im2col(input), tiled over Co × Ci × spatial
+- **Depthwise conv1d** — Direct 3D tiling (NLC layout), element-wise multiply-accumulate per channel
+- **Fused conv + SiLU** — SiLU in epilogue: `result * sigmoid(result)` (for BiBo conv layers)
+- **Fused conv + residual** — Load residual + conv output in epilogue, single write
+- **Fused conv + BN** — Pre-compute fused weights on host (eval mode): W_fused = W * gamma/sqrt(var+eps)
+- **Conv + bias + activation** — All in epilogue, no extra kernel launch
+
+**Key APIs:**
+- `TensorDescriptorIm2Col` — TMA im2col descriptor for NHWC input
+- `tma.async_load_im2col(desc, coord, offsets, barrier, smem)` — Hardware im2col load
+- `TensorDescriptor.from_tensor(weight_2d, block_shape, layout)` — TMA for weight
+- `tcgen05_mma(a, b, acc, use_acc)` — Blackwell MMA
+
+**Critical patterns:**
+- NHWC layout required (permute from NCHW: `x.permute(0,2,3,1).contiguous()`)
+- Weight reshape: `[Co, R, S, Ci] → [Co, R*S*Ci]` for 2D TMA
+- Channel padding for TMA 16-byte alignment (Ci=3 → pad to 8 for bf16)
+- M-offset decomposition: flat M → `(batch, out_y, out_x)`
+- Autotune key: `(out_h, out_w, stride_h, stride_w)` not full input shape
+- Dgrad subproblem decomposition required for stride > 1
+
 ### Other
 - **Fused Adam/AdamW** — Momentum + variance + weight update in single kernel
 - **RoPE** — Rotary position embedding fused with attention
@@ -264,6 +288,7 @@ From MIT KDA's ncu-report-skill. Map profiling data to these patterns to identif
 | `references/llm-optimizations.md` | Every LLM kernel op: RMSNorm, LayerNorm, SwiGLU, tanhGLU, ReLU²GLU, GeGLU, FlashAttention, PagedAttention, RoPE, fused QKV, fused Adam, KV cache, sampling, speculative decoding |
 | `references/profiling-guide.md` | NCU profiling: essential commands, key metrics for A100/Hopper/B200, diagnosis decision tree, harness template, Triton profiling with torch.profiler |
 | `references/optimization-playbook.md` | Six-tier optimization framework from AutoKernel: baseline → autotuning → memory optimization → operator fusion → algorithmic optimization → architecture-specific (with code examples for each tier) |
+| `references/convolution-kernels.md` | Conv2d implicit GEMM, TMA im2col, depthwise, dgrad/wgrad, fused conv patterns from Triton Gluon + PyTorch Inductor |
 | `templates/llm-kernels.py` | 6 ready-to-use Triton kernels: fused RMSNorm+residual, fused SwiGLU, fused cross-entropy, fused softmax, fused RMSNorm, fused linear+GELU (with autotuning configs and correctness test patterns) |
 | `templates/glu-kernels.md` | GLU activation reference: all variants (SwiGLU, tanhGLU, ReLU²GLU, GeGLU), correct Triton API for each (tl.sigmoid for SiLU, sigmoid identity for tanh, tl.maximum for ReLU²), fused linear+GLU pattern |
 | `benchmarks/glu_benchmark.py` | GLU benchmark script: PyTorch eager vs Triton for SiLU/tanh/ReLU² across 12 shapes, correctness verification, timing with CUDA events |
@@ -286,3 +311,8 @@ From MIT KDA's ncu-report-skill. Map profiling data to these patterns to identif
 - [bassrehab/triton-kernels](https://github.com/bassrehab/triton-kernels) — TritonMoE cross-platform
 - [stanford-futuredata/megablocks](https://github.com/stanford-futuredata/megablocks) — Block-sparse MoE
 - [deepseek-ai/DeepGEMM](https://github.com/deepseek-ai/DeepGEMM) — FP8 grouped GEMM
+
+**Convolution:**
+- [triton-lang/triton/python/examples/gluon/02-conv-*.py](https://github.com/triton-lang/triton/tree/main/python/examples/gluon) — Production conv2d (fprop/dgrad/wgrad)
+- [triton-lang/triton/python/tutorials/gluon/13-conv-im2col.py](https://github.com/triton-lang/triton/blob/main/python/tutorials/gluon/13-conv-im2col.py) — TMA im2col tutorial
+- [pytorch/pytorch/torch/_inductor/kernel/conv.py](https://github.com/pytorch/pytorch/blob/main/torch/_inductor/kernel/conv.py) — Inductor conv templates
