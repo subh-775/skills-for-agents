@@ -125,6 +125,39 @@ Only write custom Triton when:
 
 **Never write a standalone RMSNorm, SwiGLU, cross-entropy, or RoPE kernel when Liger provides one.**
 
+### Backward Pass Rule (CRITICAL)
+
+**If you write a custom forward kernel, you MUST also write the custom backward kernel.**
+
+A fused forward + stock PyTorch backward is WORSE than no fusion at all. Here's why:
+
+```
+Fused forward:  RMSNorm + residual add → 1 kernel, 1 read, 1 write
+Stock backward:  Separate RMSNorm backward + separate residual backward
+                 → Re-reads input, re-materializes intermediate tensors
+                 → The memory savings from fusion are completely negated
+                 → You paid the development cost of a custom kernel for ZERO net gain
+```
+
+**The backward must be fused with the same granularity as the forward:**
+
+| Forward (fused) | Backward (must also be fused) |
+|-----------------|------------------------------|
+| RMSNorm + residual | d_rmsnorm + d_residual in 1 kernel |
+| SwiGLU (gate*up*sigmoid) | d_gate, d_up, d_sigmoid in 1 kernel |
+| Conv + SiLU | d_conv + d_silu in 1 kernel (or fused bwd pass) |
+| Conv + bias + ReLU | d_conv + d_bias + d_relu mask in 1 kernel |
+| Cross-entropy + softmax | Already fused in Liger (online softmax + NLL) |
+
+**How to verify your backward is actually fused:**
+1. Profile with `torch.profiler` — if you see 2+ separate backward kernels where forward was 1, it's not fused
+2. Check memory usage — fused backward should use ~same peak memory as forward. If backward peak is 2x forward, intermediates are being re-materialized
+3. NCU: count kernel launches — forward 1 launch + backward 1 launch = good. Forward 1 + backward 3 = bad.
+
+**Exception:** Inference-only kernels don't need backward. But if you're training, backward is mandatory.
+
+**Liger-Kernel already handles this** — every Liger op includes a fused backward via `torch.autograd.Function`. This is another reason to use Liger when it covers your op.
+
 ---
 
 ## Core Architecture: The Optimization Loop

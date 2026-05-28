@@ -44,6 +44,23 @@ monkey_patch(model)
 
 Only write custom Triton when: Liger doesn't cover it (conv, MoE, attention variants), need architecture-specific fusion, need different tiling, or doing kernel research. **Never write standalone RMSNorm/SwiGLU/CE/RoPE when Liger provides one.**
 
+### Backward Pass Rule (CRITICAL)
+
+**If you write a custom forward kernel, you MUST also write the custom backward kernel.**
+
+Fused forward + stock PyTorch backward is WORSE than no fusion — backward re-materializes intermediates you fused away, negating all memory/latency gains. The backward must be fused at the same granularity as the forward.
+
+| Forward (fused) | Backward (must also be fused) |
+|-----------------|------------------------------|
+| RMSNorm + residual | d_rmsnorm + d_residual in 1 kernel |
+| SwiGLU (gate*up*sigmoid) | d_gate, d_up, d_sigmoid in 1 kernel |
+| Conv + SiLU | d_conv + d_silu in 1 kernel |
+| Conv + bias + ReLU | d_conv + d_bias + d_relu mask in 1 kernel |
+
+**Verify fusion:** Profile with `torch.profiler` — forward 1 launch + backward 1 launch = good. Forward 1 + backward 3 = bad. Check peak memory — fused backward should match forward. If backward peak is 2x, intermediates are re-materialized.
+
+**Exception:** Inference-only kernels don't need backward. Liger-Kernel already includes fused backward via `torch.autograd.Function` for every op.
+
 ## Triggers
 
 ```
