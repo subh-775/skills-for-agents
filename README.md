@@ -141,6 +141,12 @@ Each skill is a self-contained folder with a `SKILL.md` file. Point your agent t
 | **[Learn](skills/learn/)** | Structured study plans, topic guides, exam prediction, and active recall. | `/learn`, "teach me X", "how do I learn Y" |
 | **[Researcher](skills/researcher/)** | Deep web research. Diverse sources, cross-referencing, synthesis. | "research X", "find info about Y", "what's the latest on Z" |
 
+### GPU Engineering
+
+| Skill | Description | Triggers |
+|-------|-------------|----------|
+| **[Tritonify](skills/tritonify/)** | Agent-driven GPU kernel optimization. Triton + CUDA. Profiling-guided iteration, 52+ papers, MoE/loss/attention kernels. | "optimize kernel", "write triton", "profile CUDA", "fuse operators", "speed up LLM ops" |
+
 ### Analysis
 
 | Skill | Description | Triggers |
@@ -164,8 +170,8 @@ Skills Interoperability Protocol ensures every skill knows how to compose with o
 ### ⚡ Production-Ready
 Battle-tested skills for ML research, documentation, UI/UX, incident response, and more.
 
-### 🎨 17 Skills Included
-Blogger, Caveman, Compress, Documenter, Godmode, Harden, Learn, Memory, ML Engine, OSINT, Painter, Planner, Postmortem, Refactor, Researcher, Skill Creator, Slidify.
+### 🎨 18 Skills Included
+Blogger, Caveman, Compress, Documenter, Godmode, Harden, Learn, Memory, ML Engine, OSINT, Painter, Planner, Postmortem, Refactor, Researcher, Skill Creator, Slidify, Tritonify.
 
 ### 🚀 Framework-Agnostic
 Drop into any agent framework. Works with any LLM that supports system prompts.
