@@ -46,6 +46,87 @@ yields_to: [process]
 
 ---
 
+## Liger-Kernel First Policy (MANDATORY)
+
+**Before writing ANY custom Triton kernel, check if Liger-Kernel already provides it.**
+
+Liger-Kernel (`linkedin/Liger-Kernel`) is a production-tested library of fused Triton kernels for LLM training. It covers the most common operations — writing your own is wasted effort unless Liger doesn't cover your case.
+
+### What Liger-Kernel Provides (DO NOT reinvent)
+
+| Operation | Liger Module | What it fuses |
+|-----------|-------------|---------------|
+| RMSNorm | `liger_kernel.ops.rms_norm` | Forward + backward, in-place |
+| LayerNorm | `liger_kernel.ops.layer_norm` | Forward + backward |
+| SwiGLU | `liger_kernel.ops.swiglu` | Gate + up + SiLU fused |
+| GeGLU | `liger_kernel.ops.geglu` | Gate + up + GELU fused |
+| Cross-Entropy | `liger_kernel.ops.cross_entropy` | Online softmax + NLL + backward, in-place |
+| Fused Linear+CE | `liger_kernel.ops.fused_linear_cross_entropy` | Avoids materializing BT×V logits |
+| KL Divergence | `liger_kernel.ops.kl_div` | Fused KL with chunking |
+| JSD | `liger_kernel.ops.jsd` | Fused Jensen-Shannon divergence |
+| TVD | `liger_kernel.ops.tvd` | Fused Total Variation distance |
+| GRPO Loss | `liger_kernel.ops.grpo_loss` | Selective log-softmax, PPO clipping, KL penalty |
+| DPO Loss | `liger_kernel.ops.dpo_loss` | Chunked preference loss |
+| SimPO/CPO/ORPO | `liger_kernel.ops.{simpo,cpo,orpo}_loss` | Chunked preference variants |
+| RoPE | `liger_kernel.ops.rope` | Rotary position embedding |
+| SparseMax | `liger_kernel.ops.sparsemax` | Sparsemax activation |
+| CrossEntropy+Softcap | `liger_kernel.ops.cross_entropy` | Supports softcapping for Gemma2 |
+| Hinge Loss | `liger_kernel.ops.hinge_loss` | Fused hinge |
+
+### Decision Flow
+
+```
+Need an operation?
+  │
+  ├─ Is it in the table above?
+  │   ├─ YES → Use liger_kernel.ops.<op>. Done.
+  │   └─ NO  → Continue below
+  │
+  ├─ Is it a standard LLM op (norm, activation, loss)?
+  │   ├─ Check liger_kernel/ops/ source — might be unlisted
+  │   └─ If not there → Write custom Triton kernel
+  │
+  ├─ Is it a convolution op?
+  │   └─ Use convolution-kernels.md reference (Triton Gluon / Inductor patterns)
+  │
+  ├─ Is it an MoE op?
+  │   └─ Use moe-kernels.md reference
+  │
+  └─ Is it something novel / architecture-specific?
+      └─ Write custom kernel using the optimization loop below
+```
+
+### How to Use Liger-Kernel
+
+```python
+# Installation
+# pip install liger-kernel
+
+# Drop-in replacement for PyTorch modules:
+from liger_kernel.transformers import LigerRMSNorm, LigerSwiGLUMLP, LigerCrossEntropyLoss
+
+# Or monkey-patch a HuggingFace model:
+from liger_kernel.transformers import monkey_patch
+monkey_patch(model)  # Replaces RMSNorm, SwiGLU, CE with fused Triton versions
+
+# Or use the ops directly:
+from liger_kernel.ops.rms_norm import liger_rms_norm
+from liger_kernel.ops.cross_entropy import liger_cross_entropy
+from liger_kernel.ops.fused_linear_cross_entropy import liger_fused_linear_cross_entropy
+```
+
+### When to Write Custom Kernels Instead
+
+Only write custom Triton when:
+1. **Liger doesn't cover it** — conv ops, attention variants, custom activations, MoE dispatch
+2. **You need architecture-specific fusion** — e.g., fusing conv+SiLU+residual for BiBo
+3. **You need different tiling/blocking** — Liger's defaults don't match your shapes
+4. **You're doing kernel research** — ablations, new algorithms, benchmarking
+
+**Never write a standalone RMSNorm, SwiGLU, cross-entropy, or RoPE kernel when Liger provides one.**
+
+---
+
 ## Core Architecture: The Optimization Loop
 
 The tritonify workflow follows the **Profile → Diagnose → Plan → Implement → Validate** loop,
