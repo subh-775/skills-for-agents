@@ -125,38 +125,30 @@ Only write custom Triton when:
 
 **Never write a standalone RMSNorm, SwiGLU, cross-entropy, or RoPE kernel when Liger provides one.**
 
-### Backward Pass Rule (CRITICAL)
+### Backward Pass: Best Practice (Not Always Required)
 
-**If you write a custom forward kernel, you MUST also write the custom backward kernel.**
+**Writing a fused forward kernel is still valuable even without a matching backward.** Here's why:
 
-A fused forward + stock PyTorch backward is WORSE than no fusion at all. Here's why:
+- Forward fusion eliminates intermediate tensor allocation/deallocation — this saves memory and latency regardless of backward
+- Inference-only workloads don't need backward at all
+- PyTorch autograd can still compute correct gradients through a Triton forward (it traces the output, not the kernel)
+- The BiMoE MoE kernel proves this: 1.51x full model speedup with forward-only Triton, backward via PyTorch autograd
 
-```
-Fused forward:  RMSNorm + residual add → 1 kernel, 1 read, 1 write
-Stock backward:  Separate RMSNorm backward + separate residual backward
-                 → Re-reads input, re-materializes intermediate tensors
-                 → The memory savings from fusion are completely negated
-                 → You paid the development cost of a custom kernel for ZERO net gain
-```
+**When you SHOULD write a fused backward:**
+- Training workloads where backward pass is the bottleneck (>40% of step time)
+- When the backward re-materializes large intermediates that forward fused away
+- When Liger-Kernel covers your op (it already includes fused backward via `torch.autograd.Function`)
 
-**The backward must be fused with the same granularity as the forward:**
+**When forward-only is fine:**
+- Inference workloads
+- When backward is dominated by other ops (attention, allreduce)
+- When the forward fusion eliminates the memory bottleneck
+- When PyTorch autograd gives correct gradients through the Triton output
 
-| Forward (fused) | Backward (must also be fused) |
-|-----------------|------------------------------|
-| RMSNorm + residual | d_rmsnorm + d_residual in 1 kernel |
-| SwiGLU (gate*up*sigmoid) | d_gate, d_up, d_sigmoid in 1 kernel |
-| Conv + SiLU | d_conv + d_silu in 1 kernel (or fused bwd pass) |
-| Conv + bias + ReLU | d_conv + d_bias + d_relu mask in 1 kernel |
-| Cross-entropy + softmax | Already fused in Liger (online softmax + NLL) |
-
-**How to verify your backward is actually fused:**
-1. Profile with `torch.profiler` — if you see 2+ separate backward kernels where forward was 1, it's not fused
-2. Check memory usage — fused backward should use ~same peak memory as forward. If backward peak is 2x forward, intermediates are being re-materialized
-3. NCU: count kernel launches — forward 1 launch + backward 1 launch = good. Forward 1 + backward 3 = bad.
-
-**Exception:** Inference-only kernels don't need backward. But if you're training, backward is mandatory.
-
-**Liger-Kernel already handles this** — every Liger op includes a fused backward via `torch.autograd.Function`. This is another reason to use Liger when it covers your op.
+**How to verify forward-only kernels don't regress backward:**
+1. Full model loss must be identical (not just close)
+2. Backward must complete without NaN/Inf
+3. Measure full fwd+bwd — if the speedup holds, forward-only is fine
 
 ---
 
