@@ -125,30 +125,213 @@ Only write custom Triton when:
 
 **Never write a standalone RMSNorm, SwiGLU, cross-entropy, or RoPE kernel when Liger provides one.**
 
-### Backward Pass: Best Practice (Not Always Required)
+### Autograd Safety — CRITICAL (from SEV1 incident 2026-05-29)
 
-**Writing a fused forward kernel is still valuable even without a matching backward.** Here's why:
+> **HARD RULES — violation of ANY of these is a P0 bug:**
+>
+> 1. **NEVER write into `torch.empty()` via raw Triton kernel without wrapping in `torch.autograd.Function`.** `torch.empty()` creates a leaf tensor — autograd sees no connection between input and output. Gradients stop dead.
+>
+> 2. **NEVER use `register_buffer()` for tensors that participate in computation that needs gradients.** Buffers are excluded from `parameters()` and `requires_grad=False` by default. Using a buffer in `F.linear` means the weight never updates.
+>
+> 3. **NEVER promote a kernel based on "backward doesn't crash" alone.** Backward can "succeed" while producing zero gradients for entire subgraphs. The loss still gets a gradient from working components, so `.backward()` completes silently.
+>
+> 4. **ALWAYS verify gradient equivalence before promoting any training kernel.** Compare weight gradients between patched and unpatched models. Fail if any param has zero grad, `grad=None`, or max diff > 1e-3 (fp32) / 5e-2 (fp16).
 
-- Forward fusion eliminates intermediate tensor allocation/deallocation — this saves memory and latency regardless of backward
-- Inference-only workloads don't need backward at all
-- PyTorch autograd can still compute correct gradients through a Triton forward (it traces the output, not the kernel)
-- The BiMoE MoE kernel proves this: 1.51x full model speedup with forward-only Triton, backward via PyTorch autograd
+#### The Two Gradient Killers (BiBo SEV1 — May 2026)
+
+**Killer #1: `register_buffer` — Dead Weight Copy**
+```python
+# BROKEN: buffer = no gradients, layers frozen forever
+fused_w = torch.cat([module.gate_proj.weight.data, module.up_proj.weight.data], dim=0)
+module.register_buffer('_fused_gate_up_weight', fused_w)  # ← DEAD COPY
+gate_up = F.linear(x_2d, self._fused_gate_up_weight)      # ← gate_proj.grad = None
+
+# FIXED: concatenate LIVE parameters on every forward
+fused_weight = torch.cat([self.gate_proj.weight, self.up_proj.weight], dim=0)
+gate_up = F.linear(x_2d, fused_weight)  # ← autograd traces through both weights
+```
+
+**Killer #2: `torch.empty()` — Severs Autograd Graph**
+```python
+# BROKEN: Triton writes into fresh tensor — no autograd history
+def triton_fused_glu_activation(gate_up, act_type):
+    out = torch.empty(M, I, device=gate_up.device, dtype=gate_up.dtype)  # ← LEAF
+    _fused_glu_act_kernel[grid](gate_up, out, ...)  # ← kernel fills it
+    return out  # ← autograd: "this has no grad_fn"
+
+# FIXED: wrap in torch.autograd.Function
+class _TritonFusedGLUFunction(torch.autograd.Function):
+    @staticmethod
+    def forward(ctx, gate_up, act_type):
+        ctx.save_for_backward(gate_up)
+        ctx.act_type = act_type
+        M, I2 = gate_up.shape
+        out = torch.empty(M, I2 // 2, device=gate_up.device, dtype=gate_up.dtype)
+        _fused_glu_act_kernel[grid](gate_up, out, ...)  # Triton for speed
+        return out
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        gate_up, = ctx.saved_tensors
+        gate, up = gate_up[:, :I], gate_up[:, I:]
+        # Recompute activation grads via PyTorch ops (correct by construction)
+        if ctx.act_type == 'silu':
+            sig = torch.sigmoid(gate)
+            grad_gate = grad_output * (sig + gate * sig * (1 - sig)) * up
+            grad_up = grad_output * (gate * sig)
+        # ... other activation types
+        return torch.cat([grad_gate, grad_up], dim=-1), None
+```
+
+#### Decision Tree: Do I Need `torch.autograd.Function`?
+
+```
+Does the kernel output participate in training (backward pass needed)?
+├─ NO (inference-only) → No wrapper needed. Raw kernel is fine.
+└─ YES →
+    ├─ Is the output tensor created by autograd-traced ops?
+    │   (e.g., output of F.linear, torch.mm, +, *, etc.)
+    │   ├─ YES → Autograd CAN trace through. Forward-only is fine.
+    │   └─ NO → Is the output from torch.empty(), torch.zeros(),
+    │           torch.ones(), or any non-traced allocation?
+    │           ├─ YES → MUST wrap in torch.autograd.Function
+    │           └─ UNSURE → MUST wrap in torch.autograd.Function
+    │
+    └─ Does any input come from register_buffer()?
+        ├─ YES → MUST convert to live parameter recomputation
+        └─ NO → Check above decision tree
+```
+
+**"Forward-only is fine" — WHEN IT ACTUALLY IS:**
+- Inference workloads (no backward at all)
+- The output tensor is produced by autograd-traced ops (e.g., you call `F.linear` then Triton post-processes the result of that traced op)
+- The kernel is a pure elementwise transform on a tensor that already has `grad_fn`
+
+**"Forward-only is fine" — WHEN IT IS NOT:**
+- The kernel writes into `torch.empty()` or any pre-allocated leaf tensor
+- Any input comes from `register_buffer()`
+- The kernel replaces a PyTorch op that has its own backward (e.g., replacing `F.silu` with a Triton silu)
+- You are unsure → default to wrapping in `torch.autograd.Function`
+
+#### Backward Pass Decision
 
 **When you SHOULD write a fused backward:**
 - Training workloads where backward pass is the bottleneck (>40% of step time)
 - When the backward re-materializes large intermediates that forward fused away
 - When Liger-Kernel covers your op (it already includes fused backward via `torch.autograd.Function`)
 
-**When forward-only is fine:**
-- Inference workloads
+**When forward-only is fine (with autograd.Function wrapper for the forward):**
 - When backward is dominated by other ops (attention, allreduce)
 - When the forward fusion eliminates the memory bottleneck
-- When PyTorch autograd gives correct gradients through the Triton output
+- The wrapper ensures gradients flow even if backward is done by PyTorch autograd (recomputes via standard ops)
 
-**How to verify forward-only kernels don't regress backward:**
-1. Full model loss must be identical (not just close)
-2. Backward must complete without NaN/Inf
-3. Measure full fwd+bwd — if the speedup holds, forward-only is fine
+### Gradient Verification Protocol — MANDATORY
+
+**Before promoting ANY kernel that touches training, run ALL of these:**
+
+#### Test 1: Gradient Equivalence (P0 — most important)
+```python
+def test_gradient_equivalence(model_patched, model_unpatched, batch):
+    """Compare weight gradients between patched and unpatched models."""
+    # Forward + backward on both models (same input, same seed)
+    loss_p = model_patched(**batch).loss
+    loss_p.backward()
+    loss_u = model_unpatched(**batch).loss
+    loss_u.backward()
+
+    # Check: loss must be identical
+    assert abs(loss_p.item() - loss_u.item()) < 1e-6, \
+        f"Loss mismatch: {loss_p.item()} vs {loss_u.item()}"
+
+    # Check: every parameter must have non-zero gradient
+    for name, param in model_patched.named_parameters():
+        if param.requires_grad:
+            assert param.grad is not None, f"{name}.grad is None (patched)"
+            assert param.grad.norm() > 0, f"{name}.grad is zero (patched)"
+
+    # Check: gradients must match unpatched
+    for (n1, p1), (n2, p2) in zip(
+        model_patched.named_parameters(),
+        model_unpatched.named_parameters()
+    ):
+        if p1.requires_grad and p2.requires_grad:
+            diff = (p1.grad - p2.grad).abs().max().item()
+            tol = 5e-2 if p1.dtype == torch.float16 else 1e-3
+            assert diff < tol, f"{n1}: grad diff {diff} > {tol}"
+```
+
+#### Test 2: No Zero Gradients (P0)
+```python
+def test_no_zero_gradients(model, batch):
+    """Every trainable parameter must receive non-zero gradient."""
+    model(**batch).loss.backward()
+    for name, param in model.named_parameters():
+        if param.requires_grad:
+            assert param.grad is not None, f"{name}.grad is None"
+            assert param.grad.abs().sum() > 0, f"{name}.grad is all zeros"
+            assert not torch.isnan(param.grad).any(), f"{name}.grad has NaN"
+            assert not torch.isinf(param.grad).any(), f"{name}.grad has Inf"
+```
+
+#### Test 3: No Stale Buffers (P0)
+```python
+def test_no_stale_buffers(model):
+    """No register_buffer used for tensors that need gradients."""
+    for name, buf in model.named_buffers():
+        # Buffers should only be for non-learnable state (running stats, masks, etc.)
+        assert not name.endswith(('_weight', '_bias', '_proj')), \
+            f"Suspicious buffer '{name}' — should this be a parameter?"
+```
+
+#### Test 4: 50-Step Smoke Test (P0)
+```python
+def test_50_step_smoke(model_patched, model_unpatched, dataloader, seed=42):
+    """Run 50 steps on both models, assert loss curves within 5%."""
+    torch.manual_seed(seed)
+    losses_p, losses_u = [], []
+    for i, batch in enumerate(dataloader):
+        if i >= 50: break
+        # Patched
+        loss_p = model_patched(**batch).loss
+        loss_p.backward()
+        optimizer_p.step(); optimizer_p.zero_grad()
+        losses_p.append(loss_p.item())
+        # Unpatched (same data)
+        loss_u = model_unpatched(**batch).loss
+        loss_u.backward()
+        optimizer_u.step(); optimizer_u.zero_grad()
+        losses_u.append(loss_u.item())
+
+    # At step 50, losses must be within 5%
+    ratio = losses_p[-1] / losses_u[-1]
+    assert 0.95 < ratio < 1.05, \
+        f"Loss divergence at step 50: patched={losses_p[-1]:.4f} unpatched={losses_u[-1]:.4f} ratio={ratio:.3f}"
+```
+
+#### Test 5: Grad Norm Sanity (P1 — runtime hook)
+```python
+def grad_norm_hook(model, step=0):
+    """Log WARNING if any param has suspiciously low grad norm on first backward."""
+    for name, param in model.named_parameters():
+        if param.requires_grad and param.grad is not None:
+            gnorm = param.grad.norm().item()
+            if gnorm == 0:
+                print(f"WARNING [step {step}] {name}: grad norm = 0 (possible gradient death)")
+            elif gnorm < 1e-10:
+                print(f"WARNING [step {step}] {name}: grad norm = {gnorm:.2e} (suspiciously low)")
+```
+
+#### Promotion Gate — NEVER skip this
+
+A kernel is ONLY promoted when ALL of these pass:
+1. ✅ Forward numerical correctness (atol=1e-3 fp16, 1e-5 fp32)
+2. ✅ Gradient equivalence test (max diff < tolerance)
+3. ✅ No zero/None/NaN/Inf gradients on any trainable parameter
+4. ✅ No stale buffers used for learnable tensors
+5. ✅ 50-step smoke test (loss curves within 5%)
+6. ✅ Full model fwd+bwd speedup measured (not just kernel-level)
+
+**"Backward doesn't crash" is NOT a valid promotion criterion. It was the exact failure mode in the BiBo SEV1 incident.**
 
 ---
 
@@ -162,7 +345,8 @@ derived from MIT Kernel Design Agents (KDA), CudaForge, and KernelSkill.
 │                    TRITONIFY LOOP                        │
 │                                                          │
 │  1. TASK CONTRACT    Define objective, constraints,      │
-│                      validation, promotion criteria      │
+│                      validation, GRADIENT PLAN,          │
+│                      BUFFER AUDIT, promotion criteria    │
 │                          │                               │
 │  2. PROFILE          Nsight Compute / triton.testing     │
 │                      Identify bottlenecks                │
@@ -176,8 +360,8 @@ derived from MIT Kernel Design Agents (KDA), CudaForge, and KernelSkill.
 │  5. IMPLEMENT        One candidate at a time             │
 │                      Small, testable changes             │
 │                          │                               │
-│  6. VALIDATE         Correctness check → Performance     │
-│                      measure → Record evidence           │
+│  6. VALIDATE         Correctness check → GRADIENT CHECK  │
+│                      → Performance measure → Record      │
 │                          │                               │
 │  7. DECIDE           Keep / Revise / Reject candidate    │
 │                      Update candidates.jsonl             │
@@ -204,6 +388,8 @@ Every optimization task MUST define a task contract before any code is written.
 - **Validation command:** [How to prove correctness]
 - **Evaluation command:** [How to measure performance]
 - **Promotion criteria:** [What must be true to accept — e.g., "correct + 2x faster"]
+- **🔴 Gradient verification:** [How you'll prove gradients flow — e.g., "gradient equivalence test vs unpatched"]
+- **🔴 Buffer audit:** [Confirm no register_buffer used for learnable tensors]
 ```
 
 ---
@@ -477,6 +663,9 @@ def kernel(
 6. **Don't over-tile** — register pressure kills occupancy; profile both
 7. **`num_warps=4` is default** — try 4, 8, 16; more isn't always better
 8. **`num_stages=2-4`** — pipeline depth for software prefetching
+9. **🔴 NEVER write into `torch.empty()` without `autograd.Function` wrapper** — severs gradient graph (SEV1: 2026-05-29)
+10. **🔴 NEVER use `register_buffer` for tensors that need gradients** — buffers are invisible to autograd (SEV1: 2026-05-29)
+11. **🔴 NEVER promote kernel on "backward doesn't crash" alone** — silent gradient death is worse than a crash (SEV1: 2026-05-29)
 
 ### Triton vs CUDA Decision Matrix
 
@@ -571,13 +760,17 @@ def kernel(
 {"name": "v4_fused_residual", "parent": "v3_triton_autotuned", "status": "promoted", "perf_us": 12.1, "notes": "Fused residual add, 3.74x over baseline"}
 ```
 
-### Evidence-Based Promotion Rules
+### Evidence-Based Promotion Rules (SEV1 upgraded, 2026-05-29)
 
 1. **Never promote without measurement** — every candidate must have timing data
 2. **Correctness is binary** — pass/fail, no "close enough"
 3. **Record exact numbers** — "faster" is not evidence, "18.4μs vs 45.2μs (2.46x)" is
 4. **Compare against baseline** — always measure relative to the starting point
 5. **Reject with reason** — never silently discard; record why
+6. **🔴 Gradient equivalence is MANDATORY** — "backward doesn't crash" is NOT a valid promotion criterion (SEV1: backward "succeeded" while gradients were zero for 3 layers)
+7. **🔴 No zero/None/NaN gradients** — every trainable param must receive a gradient
+8. **🔴 50-step loss comparison** — patched vs unpatched must converge within 5%
+9. **🔴 No register_buffer for learnable tensors** — buffers are invisible to autograd
 
 ---
 
@@ -634,13 +827,18 @@ See `references/convolution-kernels.md` for complete code patterns.
 
 ## Benchmarking Protocol
 
-### Correctness Verification (5-stage, from AutoKernel)
+### Correctness Verification (8-stage — SEV1 upgraded, 2026-05-29)
 
 1. **Smoke test** — basic shapes work
 2. **Shape sweeps** — test across batch sizes, seq lens, hidden dims
 3. **Numerical tolerance** — atol=1e-3/rtol=1e-3 for fp16, atol=1e-5 for fp32
 4. **Determinism** — same input → same output across runs
 5. **Edge cases** — empty tensors, single element, max dimensions
+6. **🔴 Gradient equivalence** — compare weight grads patched vs unpatched (max diff < tolerance)
+7. **🔴 No zero gradients** — every trainable param has non-None, non-zero, non-NaN grad
+8. **🔴 50-step smoke test** — loss curves within 5% of unpatched baseline
+
+**Stages 6-8 are MANDATORY for any kernel used in training.** Skipping them is how the BiBo SEV1 incident happened — forward was verified to 1e-7 precision but gradients were completely dead.
 
 ### Performance Measurement
 
@@ -779,6 +977,7 @@ Human expertise + agent assistance > pure agent optimization.
 | `references/optimization-playbook.md` | Six-tier optimization framework from AutoKernel |
 | `references/convolution-kernels.md` | Conv2d implicit GEMM, TMA im2col, depthwise, dgrad/wgrad, fused conv patterns |
 | `templates/llm-kernels.py` | 6 ready-to-use Triton kernel templates |
+| `templates/gradient_verification.py` | 🔴 MANDATORY: 5-test gradient verification suite (SEV1 incident response) |
 
 ### When to Load References
 
@@ -789,6 +988,7 @@ Human expertise + agent assistance > pure agent optimization.
 - **Profiling/debugging** → Load `profiling-guide.md`
 - **Starting optimization** → Load `optimization-playbook.md`
 - **Need starter code** → Load `templates/llm-kernels.py`
+- **🔴 Before promoting ANY training kernel** → Load `templates/gradient_verification.py` and run all 5 tests
 - **Researching approaches** → Load `paper-survey.md`
 
 ---
@@ -797,13 +997,15 @@ Human expertise + agent assistance > pure agent optimization.
 
 The KDA repo (`mit-han-lab/kernel-design-agents`) provides the core agent workflow pattern:
 
-### Task Contract Pattern
+### Task Contract Pattern (SEV1 upgraded)
 Every optimization MUST define:
 - Objective, inputs, outputs
 - Correctness requirements (tolerance)
 - Baseline timing + target timing
 - Validation command + evaluation command
 - Promotion criteria
+- **🔴 Gradient verification plan** — how will you prove gradients flow correctly?
+- **🔴 register_buffer audit** — confirm no buffers used for learnable tensors
 
 ### Candidate Lineage Tracking
 ```jsonl
@@ -812,12 +1014,16 @@ Every optimization MUST define:
 {"name": "v3_autotuned", "parent": "v2_triton_naive", "status": "promoted", "perf_us": 18.4}
 ```
 
-### Evidence-Based Promotion Rules
+### Evidence-Based Promotion Rules (SEV1 upgraded)
 1. Never promote without measurement
 2. Correctness is binary (pass/fail)
 3. Record exact numbers, not "faster"
 4. Compare against baseline
 5. Reject with reason
+6. 🔴 Gradient equivalence MANDATORY — "backward doesn't crash" is NOT evidence
+7. 🔴 No zero/None/NaN gradients on any trainable parameter
+8. 🔴 50-step loss comparison patched vs unpatched (within 5%)
+9. 🔴 No register_buffer for learnable tensors
 
 ### ncu-report-skill Analysis Dimensions
 1. SM occupancy & wave structure
@@ -830,6 +1036,12 @@ Every optimization MUST define:
 ---
 
 ## References
+
+### Incident Postmortems (READ THESE)
+
+| Incident | Date | What Happened | Lesson |
+|----------|------|---------------|--------|
+| **BiBo SEV1: Gradient Death** | 2026-05-29 | Custom Triton kernels for MoE GLU + Dense MLP broke autograd. `register_buffer()` froze 3 layers, `torch.empty()` severed graph. 1 full training run wasted. | NEVER use `register_buffer` for learnable tensors. NEVER write into `torch.empty()` without `autograd.Function`. ALWAYS verify gradient equivalence before promoting. See `BiBo/postmortem/2026-05-29-triton-kernel-gradient-death/` |
 
 ### Academic Papers (52+ total, key ones listed)
 
